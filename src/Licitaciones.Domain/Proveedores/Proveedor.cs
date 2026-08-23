@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Licitaciones.Domain.Proveedores;
 
 public sealed class Proveedor
@@ -13,7 +15,10 @@ public sealed class Proveedor
 
         NombreNormalizado = string.Join(
             ' ',
-            nombre.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries))
+            nombre
+                .Normalize(NormalizationForm.FormC)
+                .Trim()
+                .Split(' ', StringSplitOptions.RemoveEmptyEntries))
             .ToUpperInvariant();
     }
 
