@@ -17,6 +17,16 @@ public sealed class RegistrarProveedorService
     {
         var proveedor = new Proveedor(nombre);
 
+        var existeProveedor = await _repositorio.ExisteConNombreNormalizadoAsync(
+            proveedor.NombreNormalizado,
+            cancellationToken);
+
+        if (existeProveedor)
+        {
+            throw new InvalidOperationException(
+                "Ya existe un proveedor con el mismo nombre.");
+        }
+
         await _repositorio.AgregarAsync(proveedor, cancellationToken);
 
         return new RegistrarProveedorResultado(
