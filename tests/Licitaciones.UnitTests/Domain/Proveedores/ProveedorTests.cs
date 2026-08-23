@@ -17,6 +17,18 @@ public sealed class ProveedorTests
         Assert.Contains("El nombre del proveedor es obligatorio.", excepcion.Message);
     }
 
+    [Fact]
+    public void Crear_ConRepresentacionesUnicodeEquivalentes_GeneraMismaNormalizacion()
+    {
+        var nombreCompuesto = new Proveedor("Café Central");
+        var nombreDescompuesto = new Proveedor("Cafe\u0301 Central");
+
+        Assert.Equal(
+            nombreCompuesto.NombreNormalizado,
+            nombreDescompuesto.NombreNormalizado);
+        Assert.Equal("CAFÉ CENTRAL", nombreDescompuesto.NombreNormalizado);
+    }
+
     [Theory]
     [InlineData("Empresa Central")]
     [InlineData(" empresa central ")]
