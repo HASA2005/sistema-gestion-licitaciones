@@ -20,9 +20,42 @@ public sealed class RegistrarProveedorServiceTests
         Assert.Equal("EMPRESA CENTRAL", proveedorGuardado.NombreNormalizado);
     }
 
+    [Theory]
+    [InlineData("Empresa Central", "Empresa Central")]
+    [InlineData("Empresa Central", " empresa   central ")]
+    [InlineData("Café Central", "Cafe\u0301 Central")]
+    public async Task Registrar_ConNombreDuplicado_LanzaErrorControladoYNoGuarda(
+        string nombreRegistrado,
+        string nombreDuplicado)
+    {
+        var repositorio = new RepositorioProveedoresEnMemoria();
+        await repositorio.AgregarAsync(new Proveedor(nombreRegistrado));
+        var servicio = new RegistrarProveedorService(repositorio);
+
+        var excepcion = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => servicio.EjecutarAsync(nombreDuplicado));
+
+        Assert.Equal(
+            "Ya existe un proveedor con el mismo nombre.",
+            excepcion.Message);
+        Assert.Single(repositorio.Proveedores);
+    }
+
     private sealed class RepositorioProveedoresEnMemoria : IProveedorRepository
     {
         public List<Proveedor> Proveedores { get; } = [];
+
+        public Task<bool> ExisteConNombreNormalizadoAsync(
+            string nombreNormalizado,
+            CancellationToken cancellationToken = default)
+        {
+            var existe = Proveedores.Any(
+                proveedor => proveedor.NombreNormalizado.Equals(
+                    nombreNormalizado,
+                    StringComparison.Ordinal));
+
+            return Task.FromResult(existe);
+        }
 
         public Task AgregarAsync(
             Proveedor proveedor,
