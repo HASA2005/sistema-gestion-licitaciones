@@ -23,8 +23,7 @@ public sealed class RegistrarProveedorService
 
         if (existeProveedor)
         {
-            throw new InvalidOperationException(
-                "Ya existe un proveedor con el mismo nombre.");
+            throw new ProveedorDuplicadoException();
         }
 
         await _repositorio.AgregarAsync(proveedor, cancellationToken);

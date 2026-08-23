@@ -32,7 +32,7 @@ public sealed class RegistrarProveedorServiceTests
         await repositorio.AgregarAsync(new Proveedor(nombreRegistrado));
         var servicio = new RegistrarProveedorService(repositorio);
 
-        var excepcion = await Assert.ThrowsAsync<InvalidOperationException>(
+        var excepcion = await Assert.ThrowsAsync<ProveedorDuplicadoException>(
             () => servicio.EjecutarAsync(nombreDuplicado));
 
         Assert.Equal(
