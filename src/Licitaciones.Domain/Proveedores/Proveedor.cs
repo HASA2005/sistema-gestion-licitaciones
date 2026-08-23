@@ -25,13 +25,15 @@ public sealed class Proveedor
                 nameof(nombre));
         }
 
-        NombreNormalizado = string.Join(
+        Nombre = string.Join(
             ' ',
             nombreNormalizadoUnicode
                 .Trim()
-                .Split(' ', StringSplitOptions.RemoveEmptyEntries))
-            .ToUpperInvariant();
+                .Split(' ', StringSplitOptions.RemoveEmptyEntries));
+        NombreNormalizado = Nombre.ToUpperInvariant();
     }
+
+    public string Nombre { get; }
 
     public string NombreNormalizado { get; }
 }
