@@ -60,6 +60,19 @@ public sealed class ProveedorTests
     }
 
     [Theory]
+    [InlineData("  Empresa   Central  ", "Empresa Central")]
+    [InlineData("comercial,   regional", "comercial, regional")]
+    [InlineData("  Cafe\u0301   Central  ", "Café Central")]
+    public void Crear_ConNombreValido_ConservaNombreLimpio(
+        string nombre,
+        string nombreEsperado)
+    {
+        var proveedor = new Proveedor(nombre);
+
+        Assert.Equal(nombreEsperado, proveedor.Nombre);
+    }
+
+    [Theory]
     [InlineData("Empresa Central")]
     [InlineData(" empresa central ")]
     [InlineData("EMPRESA   CENTRAL")]
