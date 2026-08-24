@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using Licitaciones.Application.Proveedores;
 using Licitaciones.Domain.Proveedores;
 using Microsoft.AspNetCore.Hosting;
@@ -175,6 +176,32 @@ public sealed class RegistrarProveedorEndpointTests
         var cuerpo = await respuesta.Content.ReadAsStringAsync();
         Assert.DoesNotContain("dato técnico secreto", cuerpo);
         Assert.Empty(repositorio.Proveedores);
+    }
+
+    [Fact]
+    public async Task OpenApi_DocumentaRegistroYRespuestasEsperadas()
+    {
+        var repositorio = new RepositorioProveedoresEnMemoria();
+
+        await using var aplicacion = new ApiFactory(repositorio);
+        using var cliente = aplicacion.CreateClient();
+
+        var respuesta = await cliente.GetAsync("/openapi/v1.json");
+        respuesta.EnsureSuccessStatusCode();
+
+        await using var contenido = await respuesta.Content.ReadAsStreamAsync();
+        using var documento = await JsonDocument.ParseAsync(contenido);
+        var respuestas = documento.RootElement
+            .GetProperty("paths")
+            .GetProperty("/api/v1/proveedores")
+            .GetProperty("post")
+            .GetProperty("responses");
+
+        Assert.True(respuestas.TryGetProperty("201", out _));
+        Assert.True(respuestas.TryGetProperty("400", out _));
+        Assert.True(respuestas.TryGetProperty("409", out _));
+        Assert.True(respuestas.TryGetProperty("422", out _));
+        Assert.True(respuestas.TryGetProperty("500", out _));
     }
 
     private sealed record RegistrarProveedorRespuesta(string Mensaje);
