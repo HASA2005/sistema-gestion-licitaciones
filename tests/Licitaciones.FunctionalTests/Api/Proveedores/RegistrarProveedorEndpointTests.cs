@@ -1,0 +1,273 @@
+using System.Net;
+using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
+using Licitaciones.Application.Proveedores;
+using Licitaciones.Domain.Proveedores;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+
+namespace Licitaciones.FunctionalTests.Api.Proveedores;
+
+public sealed class RegistrarProveedorEndpointTests
+{
+    [Fact]
+    public async Task Post_ConNombreValido_DevuelveCreatedYConfirmacion()
+    {
+        var repositorio = new RepositorioProveedoresEnMemoria();
+
+        await using var aplicacion = new ApiFactory(repositorio);
+        using var cliente = aplicacion.CreateClient();
+
+        var respuesta = await cliente.PostAsJsonAsync(
+            "/api/v1/proveedores",
+            new { nombre = "  Empresa   Central  " });
+
+        Assert.Equal(HttpStatusCode.Created, respuesta.StatusCode);
+
+        var contenido = await respuesta.Content
+            .ReadFromJsonAsync<RegistrarProveedorRespuesta>();
+        Assert.NotNull(contenido);
+        Assert.Equal("Proveedor registrado correctamente.", contenido.Mensaje);
+
+        var proveedorGuardado = Assert.Single(repositorio.Proveedores);
+        Assert.Equal("Empresa Central", proveedorGuardado.Nombre);
+        Assert.Equal("EMPRESA CENTRAL", proveedorGuardado.NombreNormalizado);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("Empresa @ Central")]
+    public async Task Post_ConNombreInvalido_DevuelveUnprocessableProblemDetails(
+        string? nombre)
+    {
+        var repositorio = new RepositorioProveedoresEnMemoria();
+
+        await using var aplicacion = new ApiFactory(repositorio);
+        using var cliente = aplicacion.CreateClient();
+
+        var respuesta = await cliente.PostAsJsonAsync(
+            "/api/v1/proveedores",
+            new { nombre });
+
+        Assert.Equal(
+            HttpStatusCode.UnprocessableEntity,
+            respuesta.StatusCode);
+        Assert.Equal(
+            "application/problem+json",
+            respuesta.Content.Headers.ContentType?.MediaType);
+
+        var problema = await respuesta.Content
+            .ReadFromJsonAsync<ProblemaRespuesta>();
+        Assert.NotNull(problema);
+        Assert.Equal("Datos del proveedor inválidos.", problema.Title);
+        Assert.Equal(422, problema.Status);
+        Assert.False(string.IsNullOrWhiteSpace(problema.Detail));
+        Assert.Equal("proveedor_nombre_invalido", problema.ErrorCode);
+        Assert.False(string.IsNullOrWhiteSpace(problema.CorrelationId));
+        Assert.Empty(repositorio.Proveedores);
+    }
+
+    [Fact]
+    public async Task Post_ConNombreDuplicado_DevuelveConflictProblemDetails()
+    {
+        var repositorio = new RepositorioProveedoresEnMemoria
+        {
+            LanzarDuplicadoAlAgregar = true
+        };
+
+        await using var aplicacion = new ApiFactory(repositorio);
+        using var cliente = aplicacion.CreateClient();
+
+        var respuesta = await cliente.PostAsJsonAsync(
+            "/api/v1/proveedores",
+            new { nombre = "Empresa Central" });
+
+        Assert.Equal(HttpStatusCode.Conflict, respuesta.StatusCode);
+        Assert.Equal(
+            "application/problem+json",
+            respuesta.Content.Headers.ContentType?.MediaType);
+
+        var problema = await respuesta.Content
+            .ReadFromJsonAsync<ProblemaRespuesta>();
+        Assert.NotNull(problema);
+        Assert.Equal("Proveedor duplicado.", problema.Title);
+        Assert.Equal(409, problema.Status);
+        Assert.Equal(
+            "Ya existe un proveedor con el mismo nombre.",
+            problema.Detail);
+        Assert.Equal("proveedor_duplicado", problema.ErrorCode);
+        Assert.False(string.IsNullOrWhiteSpace(problema.CorrelationId));
+        Assert.Empty(repositorio.Proveedores);
+    }
+
+    [Fact]
+    public async Task Post_ConJsonInvalido_DevuelveBadRequestProblemDetails()
+    {
+        var repositorio = new RepositorioProveedoresEnMemoria();
+
+        await using var aplicacion = new ApiFactory(repositorio);
+        using var cliente = aplicacion.CreateClient();
+        using var contenido = new StringContent(
+            "{\"nombre\":",
+            Encoding.UTF8,
+            "application/json");
+
+        var respuesta = await cliente.PostAsync(
+            "/api/v1/proveedores",
+            contenido);
+
+        Assert.Equal(HttpStatusCode.BadRequest, respuesta.StatusCode);
+        Assert.Equal(
+            "application/problem+json",
+            respuesta.Content.Headers.ContentType?.MediaType);
+
+        var problema = await respuesta.Content
+            .ReadFromJsonAsync<ProblemaRespuesta>();
+        Assert.NotNull(problema);
+        Assert.Equal("Solicitud JSON inválida.", problema.Title);
+        Assert.Equal(400, problema.Status);
+        Assert.Equal(
+            "El cuerpo de la solicitud no contiene un JSON válido.",
+            problema.Detail);
+        Assert.Equal("solicitud_json_invalida", problema.ErrorCode);
+        Assert.False(string.IsNullOrWhiteSpace(problema.CorrelationId));
+        Assert.Empty(repositorio.Proveedores);
+    }
+
+    [Fact]
+    public async Task Post_ConErrorInesperado_DevuelveProblemDetailsSeguro()
+    {
+        var repositorio = new RepositorioProveedoresEnMemoria
+        {
+            LanzarErrorInesperadoAlAgregar = true
+        };
+
+        await using var aplicacion = new ApiFactory(repositorio);
+        using var cliente = aplicacion.CreateClient();
+
+        var respuesta = await cliente.PostAsJsonAsync(
+            "/api/v1/proveedores",
+            new { nombre = "Empresa Central" });
+
+        Assert.Equal(
+            HttpStatusCode.InternalServerError,
+            respuesta.StatusCode);
+        Assert.Equal(
+            "application/problem+json",
+            respuesta.Content.Headers.ContentType?.MediaType);
+
+        var problema = await respuesta.Content
+            .ReadFromJsonAsync<ProblemaRespuesta>();
+        Assert.NotNull(problema);
+        Assert.Equal("Error interno del servidor.", problema.Title);
+        Assert.Equal(500, problema.Status);
+        Assert.Equal(
+            "Ocurrió un error inesperado al procesar la solicitud.",
+            problema.Detail);
+        Assert.Equal("error_interno", problema.ErrorCode);
+        Assert.False(string.IsNullOrWhiteSpace(problema.CorrelationId));
+
+        var cuerpo = await respuesta.Content.ReadAsStringAsync();
+        Assert.DoesNotContain("dato técnico secreto", cuerpo);
+        Assert.Empty(repositorio.Proveedores);
+    }
+
+    [Fact]
+    public async Task OpenApi_DocumentaRegistroYRespuestasEsperadas()
+    {
+        var repositorio = new RepositorioProveedoresEnMemoria();
+
+        await using var aplicacion = new ApiFactory(repositorio);
+        using var cliente = aplicacion.CreateClient();
+
+        var respuesta = await cliente.GetAsync("/openapi/v1.json");
+        respuesta.EnsureSuccessStatusCode();
+
+        await using var contenido = await respuesta.Content.ReadAsStreamAsync();
+        using var documento = await JsonDocument.ParseAsync(contenido);
+        var respuestas = documento.RootElement
+            .GetProperty("paths")
+            .GetProperty("/api/v1/proveedores")
+            .GetProperty("post")
+            .GetProperty("responses");
+
+        Assert.True(respuestas.TryGetProperty("201", out _));
+        Assert.True(respuestas.TryGetProperty("400", out _));
+        Assert.True(respuestas.TryGetProperty("409", out _));
+        Assert.True(respuestas.TryGetProperty("422", out _));
+        Assert.True(respuestas.TryGetProperty("500", out _));
+    }
+
+    private sealed record RegistrarProveedorRespuesta(string Mensaje);
+
+    private sealed record ProblemaRespuesta(
+        string Title,
+        int Status,
+        string Detail,
+        string ErrorCode,
+        string CorrelationId);
+
+    private sealed class ApiFactory(
+        IProveedorRepository repositorio) : WebApplicationFactory<Program>
+    {
+        protected override void ConfigureWebHost(IWebHostBuilder builder)
+        {
+            builder.UseSetting(
+                "ConnectionStrings:Licitaciones",
+                "Host=localhost;Database=licitaciones_tests;Username=test;Password=test");
+            builder.ConfigureLogging(logging => logging.ClearProviders());
+
+            builder.ConfigureServices(services =>
+            {
+                services.RemoveAll<IProveedorRepository>();
+                services.RemoveAll<RegistrarProveedorService>();
+                services.AddSingleton(repositorio);
+                services.AddScoped<RegistrarProveedorService>();
+            });
+        }
+    }
+
+    private sealed class RepositorioProveedoresEnMemoria
+        : IProveedorRepository
+    {
+        public List<Proveedor> Proveedores { get; } = [];
+
+        public bool LanzarDuplicadoAlAgregar { get; init; }
+
+        public bool LanzarErrorInesperadoAlAgregar { get; init; }
+
+        public Task<bool> ExisteConNombreNormalizadoAsync(
+            string nombreNormalizado,
+            CancellationToken cancellationToken = default)
+        {
+            var existe = Proveedores.Any(
+                proveedor => proveedor.NombreNormalizado == nombreNormalizado);
+
+            return Task.FromResult(existe);
+        }
+
+        public Task AgregarAsync(
+            Proveedor proveedor,
+            CancellationToken cancellationToken = default)
+        {
+            if (LanzarDuplicadoAlAgregar)
+            {
+                throw new ProveedorDuplicadoException();
+            }
+
+            if (LanzarErrorInesperadoAlAgregar)
+            {
+                throw new InvalidOperationException("dato técnico secreto");
+            }
+
+            Proveedores.Add(proveedor);
+            return Task.CompletedTask;
+        }
+    }
+}
