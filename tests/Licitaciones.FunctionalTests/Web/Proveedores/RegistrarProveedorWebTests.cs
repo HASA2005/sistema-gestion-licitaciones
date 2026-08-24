@@ -143,6 +143,38 @@ public sealed class RegistrarProveedorWebTests
         Assert.Empty(repositorio.Proveedores);
     }
 
+    [Fact]
+    public async Task Post_ConNombreDuplicado_MuestraErrorYNoDuplica()
+    {
+        var repositorio = new RepositorioProveedoresEnMemoria();
+        repositorio.Proveedores.Add(new Proveedor("Empresa Central"));
+
+        await using var aplicacion = new WebFactory(repositorio);
+        using var cliente = aplicacion.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false,
+            BaseAddress = new Uri("https://localhost"),
+            HandleCookies = true
+        });
+
+        var paginaFormulario = await cliente.GetAsync("/proveedores/registrar");
+        paginaFormulario.EnsureSuccessStatusCode();
+        var formulario = await paginaFormulario.Content.ReadAsStringAsync();
+        using var datos = new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Nombre"] = " empresa   central ",
+            ["__RequestVerificationToken"] = ExtraerTokenAntiforgery(formulario)
+        });
+
+        var respuesta = await cliente.PostAsync("/proveedores/registrar", datos);
+
+        Assert.Equal(HttpStatusCode.OK, respuesta.StatusCode);
+        var contenido = await respuesta.Content.ReadAsStringAsync();
+        Assert.Contains("Ya existe un proveedor con el mismo nombre.", contenido);
+        Assert.Contains("value=\" empresa   central \"", contenido);
+        Assert.Single(repositorio.Proveedores);
+    }
+
     private static string ExtraerTokenAntiforgery(string contenido)
     {
         var coincidencia = PatronTokenAntiforgery.Match(contenido);
