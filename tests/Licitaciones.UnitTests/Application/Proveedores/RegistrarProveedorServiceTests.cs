@@ -20,6 +20,31 @@ public sealed class RegistrarProveedorServiceTests
         Assert.Equal("EMPRESA CENTRAL", proveedorGuardado.NombreNormalizado);
     }
 
+    [Fact]
+    public async Task Registrar_ConNombreValido_GeneraIdentificadorYAuditoriaUtc()
+    {
+        var fechaLocal = new DateTimeOffset(
+            2026,
+            8,
+            23,
+            10,
+            30,
+            0,
+            TimeSpan.FromHours(-6));
+        var repositorio = new RepositorioProveedoresEnMemoria();
+        var servicio = new RegistrarProveedorService(
+            repositorio,
+            new RelojFijo(fechaLocal));
+
+        await servicio.EjecutarAsync("Empresa Central");
+
+        var proveedorGuardado = Assert.Single(repositorio.Proveedores);
+        Assert.NotEqual(Guid.Empty, proveedorGuardado.Id);
+        Assert.Equal(fechaLocal.ToUniversalTime(), proveedorGuardado.CreatedAt);
+        Assert.Equal(proveedorGuardado.CreatedAt, proveedorGuardado.UpdatedAt);
+        Assert.Equal(TimeSpan.Zero, proveedorGuardado.CreatedAt.Offset);
+    }
+
     [Theory]
     [InlineData("Empresa Central", "Empresa Central")]
     [InlineData("Empresa Central", " empresa   central ")]
@@ -63,6 +88,14 @@ public sealed class RegistrarProveedorServiceTests
         {
             Proveedores.Add(proveedor);
             return Task.CompletedTask;
+        }
+    }
+
+    private sealed class RelojFijo(DateTimeOffset fechaActual) : TimeProvider
+    {
+        public override DateTimeOffset GetUtcNow()
+        {
+            return fechaActual;
         }
     }
 }
