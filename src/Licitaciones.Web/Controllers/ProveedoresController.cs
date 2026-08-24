@@ -15,6 +15,7 @@ public sealed class ProveedoresController(
     }
 
     [HttpPost("registrar")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Registrar(
         RegistrarProveedorViewModel modelo,
         CancellationToken cancellationToken)
