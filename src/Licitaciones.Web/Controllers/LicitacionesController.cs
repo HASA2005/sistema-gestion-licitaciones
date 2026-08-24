@@ -1,4 +1,5 @@
 using Licitaciones.Application.Licitaciones;
+using Licitaciones.Domain.Licitaciones;
 using Licitaciones.Web.Models.Licitaciones;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +11,8 @@ namespace Licitaciones.Web.Controllers;
 /// <param name="crearLicitacion">Servicio de aplicación que crea la licitación.</param>
 [Route("licitaciones")]
 public sealed class LicitacionesController(
-    CrearLicitacionService crearLicitacion) : Controller
+    CrearLicitacionService crearLicitacion,
+    PublicarLicitacionService publicarLicitacion) : Controller
 {
     private const string IdZonaHorariaCostaRica = "America/Costa_Rica";
 
@@ -56,7 +58,9 @@ public sealed class LicitacionesController(
                 cancellationToken);
 
             TempData["MensajeExito"] = resultado.Mensaje;
-            return RedirectToAction(nameof(Crear));
+            return RedirectToAction(
+                nameof(Publicar),
+                new { id = resultado.Id });
         }
         catch (LicitacionDuplicadaException excepcion)
         {
@@ -70,6 +74,67 @@ public sealed class LicitacionesController(
             ModelState.AddModelError(campo, mensaje);
             return View(modelo);
         }
+    }
+
+    /// <summary>
+    /// Muestra los datos de la licitación antes de publicarla.
+    /// </summary>
+    /// <param name="id">Identificador de la licitación.</param>
+    /// <param name="cancellationToken">Token para cancelar la operación.</param>
+    /// <returns>La vista de confirmación o un resultado 404.</returns>
+    [HttpGet("{id:guid}/publicar")]
+    public async Task<IActionResult> Publicar(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var resultado = await publicarLicitacion.ConsultarAsync(
+                id,
+                cancellationToken);
+
+            return View(CrearModeloPublicacion(resultado));
+        }
+        catch (LicitacionNoEncontradaException)
+        {
+            return NotFound();
+        }
+    }
+
+    /// <summary>
+    /// Confirma la publicación de una licitación en estado Borrador.
+    /// </summary>
+    /// <param name="id">Identificador de la licitación.</param>
+    /// <param name="cancellationToken">Token para cancelar la operación.</param>
+    /// <returns>Una redirección a la confirmación o un resultado 404.</returns>
+    [HttpPost("{id:guid}/publicar")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> PublicarConfirmado(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var resultado = await publicarLicitacion.EjecutarAsync(
+                id,
+                cancellationToken);
+
+            TempData["MensajeExito"] = resultado.Mensaje;
+        }
+        catch (LicitacionNoEncontradaException)
+        {
+            return NotFound();
+        }
+        catch (PublicacionLicitacionInvalidaException excepcion)
+        {
+            TempData["MensajeError"] = excepcion.Message;
+        }
+        catch (LicitacionConcurrenciaException excepcion)
+        {
+            TempData["MensajeError"] = excepcion.Message;
+        }
+
+        return RedirectToAction(nameof(Publicar), new { id });
     }
 
     private static DateTimeOffset ConvertirFechaLocalAUtc(DateTime fechaLocal)
@@ -111,6 +176,26 @@ public sealed class LicitacionesController(
             "FECHACIERREUTC" =>
                 nameof(CrearLicitacionViewModel.FechaCierreLocal),
             _ => string.Empty
+        };
+    }
+
+    private static PublicarLicitacionViewModel CrearModeloPublicacion(
+        LicitacionParaPublicarResultado resultado)
+    {
+        var zonaHoraria = TimeZoneInfo.FindSystemTimeZoneById(
+            IdZonaHorariaCostaRica);
+
+        return new PublicarLicitacionViewModel
+        {
+            Id = resultado.Id,
+            Codigo = resultado.Codigo,
+            Titulo = resultado.Titulo,
+            PresupuestoEstimadoCrc = resultado.PresupuestoEstimadoCrc,
+            FechaCierreCostaRica = TimeZoneInfo.ConvertTime(
+                resultado.FechaCierre,
+                zonaHoraria),
+            Estado = resultado.Estado,
+            PuedePublicarse = resultado.Estado == EstadoLicitacion.Borrador
         };
     }
 }

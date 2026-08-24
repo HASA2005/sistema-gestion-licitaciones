@@ -47,6 +47,32 @@ public sealed class LicitacionRepository(
         }
     }
 
+    /// <inheritdoc />
+    public Task<Licitacion?> ObtenerPorIdAsync(
+        Guid licitacionId,
+        CancellationToken cancellationToken = default)
+    {
+        return contexto.Licitaciones.SingleOrDefaultAsync(
+            licitacion => licitacion.Id == licitacionId,
+            cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task GuardarCambiosAsync(
+        Licitacion licitacion,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await contexto.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            contexto.Entry(licitacion).State = EntityState.Detached;
+            throw new LicitacionConcurrenciaException();
+        }
+    }
+
     private static bool EsCodigoNormalizadoDuplicado(
         DbUpdateException excepcion)
     {

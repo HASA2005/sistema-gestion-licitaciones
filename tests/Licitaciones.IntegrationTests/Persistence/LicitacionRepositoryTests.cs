@@ -97,35 +97,111 @@ public sealed class LicitacionRepositoryTests
     }
 
     [Fact]
-    public async Task Guardar_ConVersionXminObsoleta_LanzaConflictoDeConcurrencia()
+    public async Task GuardarCambiosAsync_AlPublicar_PersisteEstadoAuditoriaYCambiaXmin()
     {
         await using var postgres = CrearPostgres();
         await postgres.StartAsync();
 
         var opciones = CrearOpciones(postgres.GetConnectionString());
+        var fechaPublicacion = new DateTimeOffset(
+            2026,
+            8,
+            25,
+            9,
+            30,
+            0,
+            TimeSpan.FromHours(-6));
+        var licitacion = CrearLicitacion("LIC-2026-002");
+        var licitacionId = licitacion.Id;
+        uint versionBorrador;
+
         await using (var contextoInicial = new LicitacionesDbContext(opciones))
         {
             await contextoInicial.Database.EnsureCreatedAsync();
             var repositorio = new LicitacionRepository(contextoInicial);
-            await repositorio.AgregarAsync(CrearLicitacion("LIC-2026-002"));
+            await repositorio.AgregarAsync(licitacion);
+            versionBorrador = licitacion.Version;
+        }
+
+        await using (var contextoPublicacion =
+            new LicitacionesDbContext(opciones))
+        {
+            var repositorio = new LicitacionRepository(contextoPublicacion);
+            var borrador = Assert.IsType<Licitacion>(
+                await repositorio.ObtenerPorIdAsync(licitacionId));
+
+            borrador.Publicar(fechaPublicacion);
+            await repositorio.GuardarCambiosAsync(borrador);
+        }
+
+        await using var contextoVerificacion =
+            new LicitacionesDbContext(opciones);
+        var guardada = await contextoVerificacion.Licitaciones
+            .AsNoTracking()
+            .SingleAsync(actual => actual.Id == licitacionId);
+
+        Assert.Equal(EstadoLicitacion.Publicada, guardada.Estado);
+        Assert.Equal(fechaPublicacion.ToUniversalTime(), guardada.UpdatedAt);
+        Assert.Equal(TimeSpan.Zero, guardada.UpdatedAt.Offset);
+        Assert.Equal(FechaCreacion, guardada.CreatedAt);
+        Assert.NotEqual(versionBorrador, guardada.Version);
+    }
+
+    [Fact]
+    public async Task GuardarCambiosAsync_ConXminObsoleto_TraduceConflictoYConservaPrimerCambio()
+    {
+        await using var postgres = CrearPostgres();
+        await postgres.StartAsync();
+
+        var opciones = CrearOpciones(postgres.GetConnectionString());
+        var fechaPrimeraPublicacion = new DateTimeOffset(
+            2026,
+            8,
+            25,
+            15,
+            0,
+            0,
+            TimeSpan.Zero);
+        var fechaSegundaPublicacion = fechaPrimeraPublicacion.AddMinutes(5);
+        var licitacion = CrearLicitacion("LIC-2026-003");
+        var licitacionId = licitacion.Id;
+
+        await using (var contextoInicial = new LicitacionesDbContext(opciones))
+        {
+            await contextoInicial.Database.EnsureCreatedAsync();
+            var repositorio = new LicitacionRepository(contextoInicial);
+            await repositorio.AgregarAsync(licitacion);
         }
 
         await using var primerContexto = new LicitacionesDbContext(opciones);
         await using var segundoContexto = new LicitacionesDbContext(opciones);
-        var primeraCopia = await primerContexto.Licitaciones.SingleAsync();
-        var segundaCopia = await segundoContexto.Licitaciones.SingleAsync();
+        var primerRepositorio = new LicitacionRepository(primerContexto);
+        var segundoRepositorio = new LicitacionRepository(segundoContexto);
+        var primeraCopia = Assert.IsType<Licitacion>(
+            await primerRepositorio.ObtenerPorIdAsync(licitacionId));
+        var segundaCopia = Assert.IsType<Licitacion>(
+            await segundoRepositorio.ObtenerPorIdAsync(licitacionId));
 
-        primerContexto.Entry(primeraCopia)
-            .Property(licitacion => licitacion.Titulo)
-            .CurrentValue = "Compra actualizada primero";
-        await primerContexto.SaveChangesAsync();
+        primeraCopia.Publicar(fechaPrimeraPublicacion);
+        segundaCopia.Publicar(fechaSegundaPublicacion);
 
-        segundoContexto.Entry(segundaCopia)
-            .Property(licitacion => licitacion.Titulo)
-            .CurrentValue = "Compra actualizada después";
+        await primerRepositorio.GuardarCambiosAsync(primeraCopia);
+        var excepcion = await Assert.ThrowsAsync<LicitacionConcurrenciaException>(
+            () => segundoRepositorio.GuardarCambiosAsync(segundaCopia));
 
-        await Assert.ThrowsAsync<DbUpdateConcurrencyException>(
-            () => segundoContexto.SaveChangesAsync());
+        Assert.Equal(
+            "La licitación fue modificada por otra operación. " +
+            "Actualice los datos e intente nuevamente.",
+            excepcion.Message);
+
+        await using var tercerContexto = new LicitacionesDbContext(opciones);
+        var guardada = await tercerContexto.Licitaciones
+            .AsNoTracking()
+            .SingleAsync(actual => actual.Id == licitacionId);
+
+        Assert.Equal(EstadoLicitacion.Publicada, guardada.Estado);
+        Assert.Equal(fechaPrimeraPublicacion, guardada.UpdatedAt);
+        Assert.NotEqual(fechaSegundaPublicacion, guardada.UpdatedAt);
     }
 
     private static Licitacion CrearLicitacion(string codigo)

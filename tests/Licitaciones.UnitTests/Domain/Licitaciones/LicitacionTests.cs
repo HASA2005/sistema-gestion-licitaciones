@@ -238,6 +238,80 @@ public sealed class LicitacionTests
         Assert.Equal(0u, licitacion.Version);
     }
 
+    [Fact]
+    public void Publicar_DesdeBorradorConCierreFuturo_CambiaEstadoYAuditoriaUtc()
+    {
+        var fechaCreacion = new DateTimeOffset(
+            2026, 8, 24, 10, 0, 0, TimeSpan.FromHours(-6));
+        var fechaActual = new DateTimeOffset(
+            2026, 8, 25, 9, 30, 0, TimeSpan.FromHours(-6));
+        var licitacion = new Licitacion(
+            "LIC-001",
+            "Compra de equipo",
+            1_000m,
+            fechaActual.AddDays(1),
+            fechaCreacion);
+
+        licitacion.Publicar(fechaActual);
+
+        Assert.Equal(EstadoLicitacion.Publicada, licitacion.Estado);
+        Assert.Equal(fechaActual.ToUniversalTime(), licitacion.UpdatedAt);
+        Assert.Equal(fechaCreacion.ToUniversalTime(), licitacion.CreatedAt);
+        Assert.Equal(TimeSpan.Zero, licitacion.UpdatedAt.Offset);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Publicar_ConCierreNoFuturo_LanzaErrorSinModificar(int minutos)
+    {
+        var fechaActual = new DateTimeOffset(
+            2026, 8, 25, 15, 0, 0, TimeSpan.Zero);
+        var licitacion = new Licitacion(
+            "LIC-001",
+            "Compra de equipo",
+            1_000m,
+            fechaActual.AddMinutes(minutos),
+            fechaActual.AddDays(-1));
+        var updatedAtOriginal = licitacion.UpdatedAt;
+
+        var excepcion = Assert.Throws<PublicacionLicitacionInvalidaException>(
+            () => licitacion.Publicar(fechaActual));
+
+        Assert.Equal(
+            "La fecha de cierre debe ser futura para publicar la licitación.",
+            excepcion.Message);
+        Assert.Equal(
+            MotivoPublicacionInvalida.FechaCierre,
+            excepcion.Motivo);
+        Assert.Equal(EstadoLicitacion.Borrador, licitacion.Estado);
+        Assert.Equal(updatedAtOriginal, licitacion.UpdatedAt);
+    }
+
+    [Fact]
+    public void Publicar_CuandoYaEstaPublicada_LanzaErrorSinModificarAuditoria()
+    {
+        var primeraPublicacion = new DateTimeOffset(
+            2026, 8, 25, 15, 0, 0, TimeSpan.Zero);
+        var licitacion = new Licitacion(
+            "LIC-001",
+            "Compra de equipo",
+            1_000m,
+            primeraPublicacion.AddDays(1),
+            primeraPublicacion.AddDays(-1));
+        licitacion.Publicar(primeraPublicacion);
+
+        var excepcion = Assert.Throws<PublicacionLicitacionInvalidaException>(
+            () => licitacion.Publicar(primeraPublicacion.AddHours(1)));
+
+        Assert.Equal(
+            "Solo se pueden publicar licitaciones en estado Borrador.",
+            excepcion.Message);
+        Assert.Equal(MotivoPublicacionInvalida.Estado, excepcion.Motivo);
+        Assert.Equal(EstadoLicitacion.Publicada, licitacion.Estado);
+        Assert.Equal(primeraPublicacion, licitacion.UpdatedAt);
+    }
+
     private static Licitacion CrearLicitacion(
         string codigo = "LIC-001",
         string titulo = "Compra de equipo",

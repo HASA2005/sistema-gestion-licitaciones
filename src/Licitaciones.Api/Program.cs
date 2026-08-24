@@ -14,6 +14,7 @@ builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 builder.Services.Configure<RouteHandlerOptions>(
     opciones => opciones.ThrowOnBadRequest = true);
 builder.Services.AddScoped<CrearLicitacionService>();
+builder.Services.AddScoped<PublicarLicitacionService>();
 builder.Services.AddScoped<RegistrarProveedorService>();
 builder.Services.AddInfrastructure(
     builder.Configuration.GetConnectionString("Licitaciones")
@@ -55,6 +56,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapCrearLicitacion();
+app.MapPublicarLicitacion();
 app.MapRegistrarProveedor();
 
 app.Run();
