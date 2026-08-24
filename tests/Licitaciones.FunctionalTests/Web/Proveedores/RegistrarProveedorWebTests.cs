@@ -1,15 +1,23 @@
 using System.Net;
+using System.Text.RegularExpressions;
+using Licitaciones.Application.Proveedores;
+using Licitaciones.Domain.Proveedores;
 using Licitaciones.Web;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace Licitaciones.FunctionalTests.Web.Proveedores;
 
 public sealed class RegistrarProveedorWebTests
 {
+    private static readonly Regex PatronTokenAntiforgery = new(
+        "name=\"__RequestVerificationToken\"[^>]*value=\"([^\"]+)\"",
+        RegexOptions.Compiled);
+
     [Fact]
     public async Task Get_Registrar_MuestraFormularioConProteccionAntiforgery()
     {
@@ -35,15 +43,101 @@ public sealed class RegistrarProveedorWebTests
         Assert.Contains("__RequestVerificationToken", contenido);
     }
 
-    private sealed class WebFactory : WebApplicationFactory<WebAssemblyMarker>
+    [Fact]
+    public async Task Post_ConNombreValido_GuardaYRedirigeConConfirmacion()
     {
+        var repositorio = new RepositorioProveedoresEnMemoria();
+
+        await using var aplicacion = new WebFactory(repositorio);
+        using var cliente = aplicacion.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false,
+            BaseAddress = new Uri("https://localhost"),
+            HandleCookies = true
+        });
+
+        var paginaFormulario = await cliente.GetAsync("/proveedores/registrar");
+        paginaFormulario.EnsureSuccessStatusCode();
+        var formulario = await paginaFormulario.Content.ReadAsStringAsync();
+
+        using var datos = new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Nombre"] = "  Empresa   Central  ",
+            ["__RequestVerificationToken"] = ExtraerTokenAntiforgery(formulario)
+        });
+
+        var respuesta = await cliente.PostAsync("/proveedores/registrar", datos);
+
+        Assert.Equal(HttpStatusCode.Redirect, respuesta.StatusCode);
+        Assert.Equal(
+            "/proveedores/registrar",
+            respuesta.Headers.Location?.OriginalString);
+
+        var proveedorGuardado = Assert.Single(repositorio.Proveedores);
+        Assert.Equal("Empresa Central", proveedorGuardado.Nombre);
+        Assert.Equal("EMPRESA CENTRAL", proveedorGuardado.NombreNormalizado);
+
+        var confirmacion = await cliente.GetAsync(respuesta.Headers.Location);
+        confirmacion.EnsureSuccessStatusCode();
+        var contenido = await confirmacion.Content.ReadAsStringAsync();
+        Assert.Contains("Proveedor registrado correctamente.", contenido);
+    }
+
+    private static string ExtraerTokenAntiforgery(string contenido)
+    {
+        var coincidencia = PatronTokenAntiforgery.Match(contenido);
+        Assert.True(coincidencia.Success, "No se encontró el token antiforgery.");
+
+        return WebUtility.HtmlDecode(coincidencia.Groups[1].Value);
+    }
+
+    private sealed class WebFactory(
+        IProveedorRepository? repositorio = null)
+        : WebApplicationFactory<WebAssemblyMarker>
+    {
+        private readonly IProveedorRepository _repositorio =
+            repositorio ?? new RepositorioProveedoresEnMemoria();
+
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.UseSetting(
+                "ConnectionStrings:Licitaciones",
+                "Host=localhost;Database=licitaciones_tests;Username=test;Password=test");
             builder.ConfigureLogging(logging => logging.ClearProviders());
             builder.ConfigureServices(services =>
+            {
                 services
                     .AddDataProtection()
-                    .UseEphemeralDataProtectionProvider());
+                    .UseEphemeralDataProtectionProvider();
+                services.RemoveAll<IProveedorRepository>();
+                services.RemoveAll<RegistrarProveedorService>();
+                services.AddSingleton(_repositorio);
+                services.AddScoped<RegistrarProveedorService>();
+            });
+        }
+    }
+
+    private sealed class RepositorioProveedoresEnMemoria
+        : IProveedorRepository
+    {
+        public List<Proveedor> Proveedores { get; } = [];
+
+        public Task<bool> ExisteConNombreNormalizadoAsync(
+            string nombreNormalizado,
+            CancellationToken cancellationToken = default)
+        {
+            var existe = Proveedores.Any(
+                proveedor => proveedor.NombreNormalizado == nombreNormalizado);
+
+            return Task.FromResult(existe);
+        }
+
+        public Task AgregarAsync(
+            Proveedor proveedor,
+            CancellationToken cancellationToken = default)
+        {
+            Proveedores.Add(proveedor);
+            return Task.CompletedTask;
         }
     }
 }
