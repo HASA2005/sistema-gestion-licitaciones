@@ -1,8 +1,18 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="row align-items-center py-5">
+    <div class="col-12 col-lg-8">
+        <p class="text-primary fw-semibold mb-2">Administración de proveedores</p>
+        <h1 class="display-5 fw-semibold">Sistema de Gestión de Licitaciones</h1>
+        <p class="lead text-body-secondary mt-3">
+            Registre y mantenga la información necesaria para gestionar sus procesos de licitación.
+        </p>
+        <a class="btn btn-primary btn-lg mt-2"
+           asp-controller="Proveedores"
+           asp-action="Registrar">
+            Registrar proveedor
+        </a>
+    </div>
+</section>
