@@ -24,15 +24,23 @@
                       asp-action="Registrar"
                       method="post">
                     <div class="mb-3">
-                        <label asp-for="Nombre" class="form-label"></label>
+                        <label asp-for="Nombre" class="form-label">
+                            Nombre <span class="text-danger" aria-hidden="true">*</span>
+                            <span class="visually-hidden">(obligatorio)</span>
+                        </label>
                         <input asp-for="Nombre"
                                class="form-control"
                                autocomplete="organization"
+                               aria-required="true"
+                               aria-describedby="nombre-ayuda nombre-error"
                                autofocus />
-                        <div class="form-text">
+                        <div id="nombre-ayuda" class="form-text">
                             Puede usar letras, números, espacios, punto, coma y paréntesis.
                         </div>
-                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                        <span asp-validation-for="Nombre"
+                              id="nombre-error"
+                              class="text-danger"
+                              role="alert"></span>
                     </div>
 
                     <button type="submit" class="btn btn-primary">
