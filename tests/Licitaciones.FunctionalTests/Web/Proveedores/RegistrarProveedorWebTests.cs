@@ -105,6 +105,44 @@ public sealed class RegistrarProveedorWebTests
         Assert.Empty(repositorio.Proveedores);
     }
 
+    [Theory]
+    [InlineData("", "El nombre del proveedor es obligatorio.")]
+    [InlineData("   ", "El nombre del proveedor es obligatorio.")]
+    [InlineData(
+        "Empresa @ Central",
+        "El nombre del proveedor contiene caracteres no permitidos.")]
+    public async Task Post_ConNombreInvalido_MuestraErrorYNoGuarda(
+        string nombre,
+        string mensajeEsperado)
+    {
+        var repositorio = new RepositorioProveedoresEnMemoria();
+
+        await using var aplicacion = new WebFactory(repositorio);
+        using var cliente = aplicacion.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false,
+            BaseAddress = new Uri("https://localhost"),
+            HandleCookies = true
+        });
+
+        var paginaFormulario = await cliente.GetAsync("/proveedores/registrar");
+        paginaFormulario.EnsureSuccessStatusCode();
+        var formulario = await paginaFormulario.Content.ReadAsStringAsync();
+        using var datos = new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Nombre"] = nombre,
+            ["__RequestVerificationToken"] = ExtraerTokenAntiforgery(formulario)
+        });
+
+        var respuesta = await cliente.PostAsync("/proveedores/registrar", datos);
+
+        Assert.Equal(HttpStatusCode.OK, respuesta.StatusCode);
+        var contenido = await respuesta.Content.ReadAsStringAsync();
+        Assert.Contains(mensajeEsperado, contenido);
+        Assert.Contains($"value=\"{WebUtility.HtmlEncode(nombre)}\"", contenido);
+        Assert.Empty(repositorio.Proveedores);
+    }
+
     private static string ExtraerTokenAntiforgery(string contenido)
     {
         var coincidencia = PatronTokenAntiforgery.Match(contenido);
