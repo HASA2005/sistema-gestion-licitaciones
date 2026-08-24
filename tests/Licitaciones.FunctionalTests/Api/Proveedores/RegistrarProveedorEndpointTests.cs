@@ -118,6 +118,9 @@ public sealed class RegistrarProveedorEndpointTests
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.UseSetting(
+                "ConnectionStrings:Licitaciones",
+                "Host=localhost;Database=licitaciones_tests;Username=test;Password=test");
             builder.ConfigureLogging(logging => logging.ClearProviders());
 
             builder.ConfigureServices(services =>
