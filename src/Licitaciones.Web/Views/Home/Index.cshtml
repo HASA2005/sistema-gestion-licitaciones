@@ -1,25 +1,3 @@
-﻿@{
-    ViewData["Title"] = "Inicio";
-}
-
-<section class="row align-items-center py-5">
-    <div class="col-12 col-lg-8">
-        <p class="text-primary fw-semibold mb-2">Administración de compras</p>
-        <h1 class="display-5 fw-semibold">Sistema de Gestión de Licitaciones</h1>
-        <p class="lead text-body-secondary mt-3">
-            Registre y mantenga la información necesaria para gestionar sus procesos de licitación.
-        </p>
-        <div class="d-flex flex-wrap gap-2 mt-2">
-            <a class="btn btn-primary btn-lg"
-               asp-controller="Licitaciones"
-               asp-action="Crear">
-                Crear licitación
-            </a>
-            <a class="btn btn-outline-primary btn-lg"
-               asp-controller="Proveedores"
-               asp-action="Registrar">
-                Registrar proveedor
-            </a>
-        </div>
-    </div>
-</section>
+@{ViewData["Title"]="Inicio";}
+<section class="hero mb-4"><div><span class="eyebrow">PANEL DE CONTROL</span><h1>Gestión de licitaciones</h1><p>Administre procesos de compra, proveedores y ofertas desde un solo lugar.</p><div class="d-flex gap-2"><a class="btn btn-primary" asp-controller="Licitaciones" asp-action="Crear">Crear licitación</a><a class="btn btn-light" asp-controller="Proveedores" asp-action="Registrar">Registrar proveedor</a></div></div><div class="hero-icon">✓</div></section>
+<div class="row g-3"><div class="col-md-6 col-xl-4"><a class="module-card" asp-controller="Crud" asp-action="Licitaciones"><span class="module-icon">▣</span><h2>Licitaciones</h2><p>Consulte, edite y publique procesos.</p><span>Ver módulo →</span></a></div><div class="col-md-6 col-xl-4"><a class="module-card" asp-controller="Crud" asp-action="Proveedores"><span class="module-icon">♙</span><h2>Proveedores</h2><p>Directorio y registro de proveedores.</p><span>Ver módulo →</span></a></div><div class="col-md-6 col-xl-4"><a class="module-card" asp-controller="Ofertas" asp-action="Index"><span class="module-icon">◆</span><h2>Ofertas</h2><p>Compare propuestas y encuentre la mejor.</p><span>Ver módulo →</span></a></div><div class="col-md-6 col-xl-4"><a class="module-card" asp-controller="NivelesAprobacion" asp-action="Index"><span class="module-icon">✓</span><h2>Aprobaciones</h2><p>Configure rangos y responsables.</p><span>Ver módulo →</span></a></div><div class="col-md-6 col-xl-4"><a class="module-card" asp-controller="TiposCambio" asp-action="Index"><span class="module-icon">$</span><h2>Tipos de cambio</h2><p>Administre la referencia CRC/USD.</p><span>Ver módulo →</span></a></div></div>
