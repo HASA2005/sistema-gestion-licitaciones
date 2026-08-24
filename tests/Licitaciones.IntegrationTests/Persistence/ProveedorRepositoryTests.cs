@@ -11,8 +11,7 @@ public sealed class ProveedorRepositoryTests
     [Fact]
     public async Task AgregarYConsultarAsync_PersisteProveedorEnPostgreSql()
     {
-        await using var postgres = new PostgreSqlBuilder()
-            .WithImage("postgres:16-alpine")
+        await using var postgres = new PostgreSqlBuilder("postgres:16-alpine")
             .WithDatabase("licitaciones")
             .WithUsername("postgres")
             .WithPassword("postgres")
