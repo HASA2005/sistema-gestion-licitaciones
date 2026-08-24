@@ -139,6 +139,44 @@ public sealed class RegistrarProveedorEndpointTests
         Assert.Empty(repositorio.Proveedores);
     }
 
+    [Fact]
+    public async Task Post_ConErrorInesperado_DevuelveProblemDetailsSeguro()
+    {
+        var repositorio = new RepositorioProveedoresEnMemoria
+        {
+            LanzarErrorInesperadoAlAgregar = true
+        };
+
+        await using var aplicacion = new ApiFactory(repositorio);
+        using var cliente = aplicacion.CreateClient();
+
+        var respuesta = await cliente.PostAsJsonAsync(
+            "/api/v1/proveedores",
+            new { nombre = "Empresa Central" });
+
+        Assert.Equal(
+            HttpStatusCode.InternalServerError,
+            respuesta.StatusCode);
+        Assert.Equal(
+            "application/problem+json",
+            respuesta.Content.Headers.ContentType?.MediaType);
+
+        var problema = await respuesta.Content
+            .ReadFromJsonAsync<ProblemaRespuesta>();
+        Assert.NotNull(problema);
+        Assert.Equal("Error interno del servidor.", problema.Title);
+        Assert.Equal(500, problema.Status);
+        Assert.Equal(
+            "Ocurrió un error inesperado al procesar la solicitud.",
+            problema.Detail);
+        Assert.Equal("error_interno", problema.ErrorCode);
+        Assert.False(string.IsNullOrWhiteSpace(problema.CorrelationId));
+
+        var cuerpo = await respuesta.Content.ReadAsStringAsync();
+        Assert.DoesNotContain("dato técnico secreto", cuerpo);
+        Assert.Empty(repositorio.Proveedores);
+    }
+
     private sealed record RegistrarProveedorRespuesta(string Mensaje);
 
     private sealed record ProblemaRespuesta(
@@ -175,6 +213,8 @@ public sealed class RegistrarProveedorEndpointTests
 
         public bool LanzarDuplicadoAlAgregar { get; init; }
 
+        public bool LanzarErrorInesperadoAlAgregar { get; init; }
+
         public Task<bool> ExisteConNombreNormalizadoAsync(
             string nombreNormalizado,
             CancellationToken cancellationToken = default)
@@ -192,6 +232,11 @@ public sealed class RegistrarProveedorEndpointTests
             if (LanzarDuplicadoAlAgregar)
             {
                 throw new ProveedorDuplicadoException();
+            }
+
+            if (LanzarErrorInesperadoAlAgregar)
+            {
+                throw new InvalidOperationException("dato técnico secreto");
             }
 
             Proveedores.Add(proveedor);

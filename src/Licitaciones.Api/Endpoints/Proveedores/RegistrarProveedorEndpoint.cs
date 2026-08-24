@@ -13,6 +13,7 @@ public static class RegistrarProveedorEndpoint
             .WithName("RegistrarProveedor")
             .WithTags("Proveedores")
             .Produces<RegistrarProveedorResponse>(StatusCodes.Status201Created)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status409Conflict)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 
