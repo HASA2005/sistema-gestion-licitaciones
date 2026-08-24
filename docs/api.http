@@ -1,6 +1,7 @@
-@Licitaciones.Api_HostAddress = http://localhost:5018
+@host = http://localhost:5018
 
-POST {{Licitaciones.Api_HostAddress}}/api/v1/proveedores
+# Registrar proveedor
+POST {{host}}/api/v1/proveedores
 Content-Type: application/json
 Accept: application/json
 
@@ -10,7 +11,8 @@ Accept: application/json
 
 ###
 
-POST {{Licitaciones.Api_HostAddress}}/api/v1/licitaciones
+# Crear licitación en Borrador
+POST {{host}}/api/v1/licitaciones
 Content-Type: application/json
 Accept: application/json
 
@@ -23,7 +25,8 @@ Accept: application/json
 
 ###
 
-GET {{Licitaciones.Api_HostAddress}}/openapi/v1.json
+# Consultar OpenAPI en Development
+GET {{host}}/openapi/v1.json
 Accept: application/json
 
 ###

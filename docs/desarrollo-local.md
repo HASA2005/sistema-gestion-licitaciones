@@ -29,8 +29,9 @@ Luego puede iniciar la interfaz MVC:
 dotnet run --project .\src\Licitaciones.Web\Licitaciones.Web.csproj
 ```
 
-La pantalla de registro está disponible en `/proveedores/registrar`. La API usa
-la misma variable de entorno y expone `POST /api/v1/proveedores`.
+Las pantallas implementadas están disponibles en `/proveedores/registrar` y
+`/licitaciones/crear`. La API usa la misma variable de entorno y expone
+`POST /api/v1/proveedores` y `POST /api/v1/licitaciones`.
 
 Cuando termine la sesión, elimine la variable del proceso actual:
 

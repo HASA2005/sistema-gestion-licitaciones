@@ -4,15 +4,22 @@
 
 <section class="row align-items-center py-5">
     <div class="col-12 col-lg-8">
-        <p class="text-primary fw-semibold mb-2">Administración de proveedores</p>
+        <p class="text-primary fw-semibold mb-2">Administración de compras</p>
         <h1 class="display-5 fw-semibold">Sistema de Gestión de Licitaciones</h1>
         <p class="lead text-body-secondary mt-3">
             Registre y mantenga la información necesaria para gestionar sus procesos de licitación.
         </p>
-        <a class="btn btn-primary btn-lg mt-2"
-           asp-controller="Proveedores"
-           asp-action="Registrar">
-            Registrar proveedor
-        </a>
+        <div class="d-flex flex-wrap gap-2 mt-2">
+            <a class="btn btn-primary btn-lg"
+               asp-controller="Licitaciones"
+               asp-action="Crear">
+                Crear licitación
+            </a>
+            <a class="btn btn-outline-primary btn-lg"
+               asp-controller="Proveedores"
+               asp-action="Registrar">
+                Registrar proveedor
+            </a>
+        </div>
     </div>
 </section>

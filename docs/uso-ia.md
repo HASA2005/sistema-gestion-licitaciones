@@ -40,6 +40,31 @@ Las sugerencias de la IA se contrastaron mediante:
 Al cierre técnico se registraron 46 casos correctos: 23 unitarios, 17
 funcionales y 6 de integración.
 
+## Asistencia durante HU-02
+
+En la Iteración XP 2, Codex ayudó a extraer del PDF las reglas aplicables a la
+creación de licitaciones y a distinguirlas de las reglas de publicación. También
+preparó cambios en dominio, aplicación, PostgreSQL, API, MVC, pruebas y
+documentación para revisión del estudiante.
+
+Entre las decisiones contrastadas se encuentran:
+
+- no exigir una fecha futura al guardar un Borrador;
+- interpretar `datetime-local` mediante `America/Costa_Rica` y almacenar UTC;
+- usar `decimal` y `numeric(18,2)` sin redondeo silencioso;
+- conservar los espacios internos del código porque el requisito solo elimina
+  espacios laterales;
+- impedir que API o MVC seleccionen un estado inicial diferente de `Borrador`;
+- sembrar los estados y proteger el código mediante un índice único.
+- limitar código y título para evitar errores del índice de PostgreSQL;
+- exigir zona horaria explícita en las fechas recibidas por la API.
+
+La validación detectó y corrigió la interpretación cultural de límites
+decimales en MVC, el acceso al modelo de diseño requerido para inspeccionar
+restricciones `CHECK` en EF Core 9, textos sin longitud máxima, fechas API sin
+zona explícita y detalles técnicos en errores. Después de las correcciones se
+ejecutaron 118 casos: 53 unitarios, 52 funcionales y 13 de integración.
+
 ## Ejemplos de corrección mediante evidencia
 
 - Una prueba con dos representaciones Unicode visualmente equivalentes falló

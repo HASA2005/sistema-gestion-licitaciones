@@ -1,3 +1,4 @@
+using Licitaciones.Application.Licitaciones;
 using Licitaciones.Application.Proveedores;
 using Licitaciones.Infrastructure.Persistence;
 using Licitaciones.Infrastructure.Persistence.Repositories;
@@ -16,6 +17,7 @@ public static class DependencyInjection
 
         services.AddDbContext<LicitacionesDbContext>(
             opciones => opciones.UseNpgsql(cadenaConexion));
+        services.AddScoped<ILicitacionRepository, LicitacionRepository>();
         services.AddScoped<IProveedorRepository, ProveedorRepository>();
 
         return services;

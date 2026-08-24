@@ -139,14 +139,69 @@ registrarán en el Issue antes de comenzar para obtener una velocidad comparable
 - Configurar un reporte de cobertura antes del cierre de la siguiente
   iteración.
 
-## Pequeña liberación
+## Pequeña liberación de la Iteración XP 1
 
-La Iteración XP 1 deja preparada la candidata `v0.1.0`. La etiqueta todavía no
-existe y solo debe crearse después de que:
+La documentación se integró en `main` mediante el PR #15, commit `2117778`. La
+etiqueta anotada `v0.1.0` fue creada localmente sobre ese commit el 24 de agosto
+de 2026. En el corte de esta bitácora todavía falta publicarla en GitHub, por lo
+que no se presenta como una liberación remota disponible.
 
-1. esta documentación se integre en `main`;
-2. GitHub Actions finalice correctamente en el commit integrado;
-3. se compruebe que el commit etiquetado contiene la documentación de cierre.
+## Iteración XP 2 — trabajo en curso
 
-Hasta completar esos pasos, `v0.1.0` no debe presentarse como una liberación
-publicada.
+**Objetivo:** preparar licitaciones en Borrador antes de publicar y recibir
+ofertas.
+
+**Inicio observado:** 24 de agosto de 2026.
+
+### Planning Game
+
+| Historia | Referencia | Prioridad | Estimación | Estado en el corte |
+| --- | --- | --- | ---: | --- |
+| Crear licitación en estado Borrador | [#16](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/16) | Alta | 8 puntos | Terminada técnicamente; pendiente de integración |
+
+Antes de programar se acordaron campos obligatorios, unicidad del código,
+presupuesto CRC positivo, estado inicial, auditoría, concurrencia, API, MVC y el
+alcance excluido. La fecha futura se reservó para publicar; no se impuso al
+guardar un Borrador.
+
+### Resultado técnico de HU-02
+
+- Entidad y caso de uso compartido con estado inicial `Borrador`.
+- Código normalizado mediante Unicode Form C, recorte lateral y comparación sin
+  distinguir mayúsculas, con límites seguros para PostgreSQL.
+- Presupuesto `decimal` y PostgreSQL `numeric(18,2)` con restricción positiva.
+- Fecha capturada como hora de Costa Rica y almacenada en UTC.
+- Catálogo sembrado con los tres estados oficiales.
+- Índice único, manejo de carreras y concurrencia `xmin` probada con dos
+  contextos simultáneos.
+- `POST /api/v1/licitaciones` y formulario `/licitaciones/crear`.
+- 72 casos nuevos: 30 unitarios, 35 funcionales y 7 de integración.
+- Resultado acumulado local: 118 casos correctos.
+
+Las pruebas de HU-02 se prepararon junto con su implementación en bloques por
+capa. No se registra un commit RED independiente ni se afirma un fallo
+intermedio que no haya quedado evidenciado. Los casos automatizados y
+PostgreSQL real verifican el comportamiento final; la CI del Pull Request
+confirmará el resultado en un entorno limpio.
+
+Una revisión cruzada antes de integrar endureció longitudes, caracteres de
+control, equivalencia Unicode, fechas API con zona explícita, respuestas `415`
+y mensajes sin detalles técnicos. Las rutas continúan anónimas porque identidad
+y autorización no forman parte de HU-02; esa deuda debe resolverse antes de un
+despliegue real.
+
+### Velocidad provisional
+
+HU-02 fue planificada en 8 puntos. La velocidad aceptada de la Iteración XP 2
+permanece en 0 puntos hasta integrar la historia y recibir una ejecución
+satisfactoria de CI. Después de la integración será de 8 puntos, salvo que la
+retroalimentación requiera reabrirla.
+
+### Próximos ajustes
+
+- Publicar y cerrar licitaciones se implementarán en historias separadas.
+- Se debe crear una tarea técnica para la primera prueba de navegador con
+  Playwright o Selenium.
+- Se debe configurar cobertura y sus puertas mínimas antes de cerrar la
+  Iteración XP 2.
+- La retroalimentación de cliente sobre HU-02 aún no ha sido registrada.

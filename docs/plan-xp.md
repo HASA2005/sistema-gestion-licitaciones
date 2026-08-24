@@ -50,7 +50,7 @@ MVC o API, aplique las mismas reglas de negocio y persista en PostgreSQL.
 | HU-01 Registrar proveedor | [#1](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/1) | Alta | Terminado |
 | TT-03 Configurar persistencia de proveedores | [#6](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/6) | Alta | Terminado |
 | TT-04 Configurar integración continua básica | [#11](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/11) | Alta | Terminado |
-| TT-05 Documentar cierre y pequeña liberación | [#14](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/14) | Alta | Se completa con la fusión de esta documentación |
+| TT-05 Documentar cierre y pequeña liberación | [#14](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/14) | Alta | Terminado |
 
 ### Criterios de salida
 
@@ -60,19 +60,27 @@ MVC o API, aplique las mismas reglas de negocio y persista en PostgreSQL.
 - [x] La solución compila en Release sin errores ni advertencias.
 - [x] Las 46 pruebas se ejecutan satisfactoriamente.
 - [x] GitHub Actions pasa tanto en Pull Request como en `main`.
-- [ ] La documentación de cierre se integra en `main`.
-- [ ] Se crea la etiqueta de pequeña liberación `v0.1.0` desde el commit de
-  cierre.
+- [x] La documentación de cierre se integra en `main` mediante el PR #15.
+- [x] Se crea localmente la etiqueta `v0.1.0` desde el commit de cierre.
+- [ ] Se publica la etiqueta `v0.1.0` en GitHub.
 
-## Preparación de la Iteración XP 2
+## Plan de la Iteración XP 2
 
-La primera historia funcional propuesta es **HU-02 Crear licitación en estado
-Borrador**, porque es la siguiente dependencia del flujo funcional después de
-registrar proveedores. Debe confirmarse en Planning Game y registrarse como
-Issue antes de desarrollar.
+**Inicio observado:** 24 de agosto de 2026.
 
-El primer corte no incluirá publicación, ofertas ni CRUD completo. Sus criterios
-iniciales deberán considerar código obligatorio normalizado y único, título,
-presupuesto CRC decimal mayor que cero, fecha de cierre, estado inicial Borrador,
-auditoría y concurrencia. La publicación y el cierre se tratarán como una
-historia posterior por poseer reglas de transición propias.
+**Objetivo:** permitir preparar licitaciones antes de publicarlas y fortalecer
+la calidad automatizada del recorrido Web.
+
+| Trabajo | Referencia | Prioridad | Estimación | Estado |
+| --- | --- | --- | ---: | --- |
+| HU-02 Crear licitación en Borrador | [#16](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/16) | Alta | 8 puntos | Terminada técnicamente; pendiente de integración |
+| Primera prueba real de navegador | Tarea técnica por crear | Alta | Por estimar | Pendiente |
+| Reporte y puertas de cobertura | Tarea técnica por crear | Alta | Por estimar | Pendiente |
+
+HU-02 incluye código único, título, presupuesto CRC positivo, fecha de cierre,
+estado inicial `Borrador`, auditoría, concurrencia, PostgreSQL, API y MVC. La
+publicación y el cierre se tratarán como historias posteriores por poseer reglas
+de transición propias.
+
+Los 8 puntos solo se sumarán a la velocidad observada cuando HU-02 esté
+integrada en `main` y su CI sea satisfactoria.
