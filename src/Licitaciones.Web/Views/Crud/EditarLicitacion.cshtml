@@ -1,0 +1,2 @@
+@model Licitaciones.Web.Models.Crud.EditarLicitacionViewModel
+<h1>Editar licitación</h1><form asp-action="EditarLicitacion" method="post"><div asp-validation-summary="All"></div><input asp-for="Id" type="hidden"/><input asp-for="Codigo"/><input asp-for="Titulo"/><input asp-for="PresupuestoEstimadoCrc" type="number" step=".01"/><input asp-for="FechaCierre" type="datetime-local"/><button type="submit">Guardar</button></form>

@@ -1,0 +1,2 @@
+@model IReadOnlyList<Licitaciones.Domain.Proveedores.Proveedor>
+<h1>Proveedores</h1><table><tr><th>Nombre</th></tr>@foreach(var x in Model){<tr><td><a asp-action="Proveedor" asp-route-id="@x.Id">@x.Nombre</a></td></tr>}</table>

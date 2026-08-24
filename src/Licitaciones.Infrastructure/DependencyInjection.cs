@@ -21,7 +21,9 @@ public static class DependencyInjection
         services.AddDbContext<LicitacionesDbContext>(
             opciones => opciones.UseNpgsql(cadenaConexion));
         services.AddScoped<ILicitacionRepository, LicitacionRepository>();
+        services.AddScoped<GestionarLicitacionesService>();
         services.AddScoped<IProveedorRepository, ProveedorRepository>();
+        services.AddScoped<GestionarProveedoresService>();
         services.AddScoped<IOfertaRepository, OfertaRepository>();
         services.AddScoped<INivelAprobacionRepository, NivelAprobacionRepository>();
         services.AddScoped<ITipoCambioRepository, TipoCambioRepository>();

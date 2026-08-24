@@ -9,6 +9,8 @@ namespace Licitaciones.Infrastructure.Persistence.Repositories;
 public sealed class ProveedorRepository(
     LicitacionesDbContext contexto) : IProveedorRepository
 {
+    public async Task<IReadOnlyList<Proveedor>> ListarAsync(CancellationToken cancellationToken = default) => await contexto.Proveedores.AsNoTracking().OrderBy(x => x.Nombre).ToListAsync(cancellationToken);
+    public async Task EliminarAsync(Proveedor proveedor, CancellationToken cancellationToken = default) { contexto.Proveedores.Remove(proveedor); await contexto.SaveChangesAsync(cancellationToken); }
     public Task<Proveedor?> ObtenerPorIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         contexto.Proveedores.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
     public Task<bool> ExisteConNombreNormalizadoAsync(

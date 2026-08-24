@@ -1,0 +1,2 @@
+using System.ComponentModel.DataAnnotations;
+namespace Licitaciones.Web.Models.Crud; public sealed class EditarLicitacionViewModel { public Guid Id { get; set; } [Required] public string Codigo { get; set; } = ""; [Required] public string Titulo { get; set; } = ""; [Range(typeof(decimal), "0.01", "9999999999999999")] public decimal PresupuestoEstimadoCrc { get; set; } public DateTimeOffset FechaCierre { get; set; } }
