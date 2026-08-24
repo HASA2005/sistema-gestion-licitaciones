@@ -12,10 +12,13 @@ using Licitaciones.Application.Aprobaciones;
 using Licitaciones.Application.TiposCambio;
 using Licitaciones.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Licitaciones.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
+builder.Services.AddHealthChecks();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 builder.Services.Configure<RouteHandlerOptions>(
@@ -32,6 +35,12 @@ builder.Services.AddInfrastructure(
             "Debe configurar ConnectionStrings:Licitaciones."));
 
 var app = builder.Build();
+
+if (app.Environment.IsProduction())
+{
+    using var scope = app.Services.CreateScope();
+    await scope.ServiceProvider.GetRequiredService<LicitacionesDbContext>().Database.MigrateAsync();
+}
 
 app.UseExceptionHandler();
 app.UseStatusCodePages(async contextoEstado =>
@@ -72,6 +81,7 @@ app.MapOfertas();
 app.MapNivelesAprobacion();
 app.MapTiposCambio();
 app.MapCrud();
+app.MapHealthChecks("/health");
 
 app.Run();
 

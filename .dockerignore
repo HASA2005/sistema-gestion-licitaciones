@@ -1,0 +1,10 @@
+**/bin/
+**/obj/
+.git/
+.github/
+TestResults/
+*.user
+*.suo
+Proyecto Final*.pdf
+README.md
+docs/
