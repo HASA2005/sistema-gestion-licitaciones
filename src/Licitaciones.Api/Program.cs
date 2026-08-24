@@ -1,10 +1,12 @@
 using Licitaciones.Api.Endpoints.Licitaciones;
 using Licitaciones.Api.Endpoints.Proveedores;
 using Licitaciones.Api.Endpoints.Ofertas;
+using Licitaciones.Api.Endpoints.Aprobaciones;
 using Licitaciones.Api.Errors;
 using Licitaciones.Application.Licitaciones;
 using Licitaciones.Application.Proveedores;
 using Licitaciones.Application.Ofertas;
+using Licitaciones.Application.Aprobaciones;
 using Licitaciones.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +21,7 @@ builder.Services.AddScoped<CrearLicitacionService>();
 builder.Services.AddScoped<PublicarLicitacionService>();
 builder.Services.AddScoped<RegistrarProveedorService>();
 builder.Services.AddScoped<OfertaService>();
+builder.Services.AddScoped<NivelAprobacionService>();
 builder.Services.AddInfrastructure(
     builder.Configuration.GetConnectionString("Licitaciones")
         ?? throw new InvalidOperationException(
@@ -62,6 +65,7 @@ app.MapCrearLicitacion();
 app.MapPublicarLicitacion();
 app.MapRegistrarProveedor();
 app.MapOfertas();
+app.MapNivelesAprobacion();
 
 app.Run();
 

@@ -1,6 +1,7 @@
 using Licitaciones.Application.Licitaciones;
 using Licitaciones.Application.Proveedores;
 using Licitaciones.Application.Ofertas;
+using Licitaciones.Application.Aprobaciones;
 using Licitaciones.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,7 @@ builder.Services.AddScoped<CrearLicitacionService>();
 builder.Services.AddScoped<PublicarLicitacionService>();
 builder.Services.AddScoped<RegistrarProveedorService>();
 builder.Services.AddScoped<OfertaService>();
+builder.Services.AddScoped<NivelAprobacionService>();
 builder.Services.AddInfrastructure(
     builder.Configuration.GetConnectionString("Licitaciones")
         ?? throw new InvalidOperationException(
