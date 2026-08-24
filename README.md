@@ -14,14 +14,16 @@ La Iteración XP 1 implementa el registro de proveedores de extremo a extremo:
 - formulario `/proveedores/registrar` con antiforgery;
 - 46 casos automatizados y CI con GitHub Actions.
 
-La Iteración XP 2 agrega la creación de licitaciones en Borrador mediante API y
-MVC, persistencia `numeric(18,2)`, calendario en hora de Costa Rica, estados
-sembrados, unicidad y concurrencia. El resultado acumulado es de 118 casos
-automatizados.
+La Iteración XP 2 agrega la creación de licitaciones en Borrador y la transición
+a `Publicada` mediante API y MVC, persistencia `numeric(18,2)`, calendario en
+hora de Costa Rica, estados sembrados, unicidad y concurrencia `xmin`. HU-02 ya
+está integrada; HU-03 está terminada técnicamente y pendiente de integración.
+La verificación consolidada ejecuta 145 casos: 64 unitarios, 65 funcionales y
+16 de integración.
 
 Las operaciones restantes se desarrollarán en incrementos posteriores. La
-etiqueta local `v0.1.0` identifica el cierre de la Iteración XP 1 y está
-pendiente de publicación en GitHub.
+etiqueta `v0.1.0`, que identifica el cierre de la Iteración XP 1, ya está
+publicada en GitHub.
 
 ## Requisitos
 

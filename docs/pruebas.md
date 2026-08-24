@@ -2,15 +2,15 @@
 
 ## Resultado acumulado
 
-La solución contiene 63 métodos de prueba xUnit que producen 118 casos
+La solución contiene 89 métodos de prueba xUnit que producen 145 casos
 ejecutados. Cada fila de `[InlineData]` cuenta como un caso independiente.
 
 | Nivel | Casos |
 | --- | ---: |
-| Unitarias | 53 |
-| Funcionales | 52 |
-| Integración | 13 |
-| **Total** | **118** |
+| Unitarias | 64 |
+| Funcionales | 65 |
+| Integración | 16 |
+| **Total** | **145** |
 
 ## Herramientas y aislamiento
 
@@ -20,7 +20,7 @@ ejecutados. Cada fila de `[InlineData]` cuenta como un caso independiente.
   repositorios por implementaciones en memoria.
 - Las pruebas funcionales Web usan protección de datos efímera para procesar
   antiforgery sin depender de claves persistentes.
-- Once pruebas de integración usan Testcontainers con `postgres:16-alpine`;
+- Catorce pruebas de integración usan Testcontainers con `postgres:16-alpine`;
   las otras dos inspeccionan los metadatos del modelo EF Core.
 - Docker debe estar iniciado para ejecutar la suite de integración completa.
 - No existe todavía una prueba de navegador con Playwright o Selenium; la
@@ -72,6 +72,26 @@ Archivos principales:
 
 - [dominio de licitaciones](../tests/Licitaciones.UnitTests/Domain/Licitaciones/LicitacionTests.cs);
 - [caso de uso](../tests/Licitaciones.UnitTests/Application/Licitaciones/CrearLicitacionServiceTests.cs).
+
+## HU-03 — Pruebas unitarias
+
+| Escenario | Variantes | Casos |
+| --- | --- | ---: |
+| Publicación válida | transición a `Publicada`, auditoría UTC y conservación de datos | 1 |
+| Fecha de cierre no futura | fecha igual y anterior al reloj | 2 |
+| Segunda publicación | estado y auditoría permanecen sin cambios | 1 |
+| Servicio válido | consulta, guardado y resultado completo | 1 |
+| Consulta para confirmación | datos de solo lectura y ningún guardado | 1 |
+| Identificador inexistente | publicación y consulta | 2 |
+| Cierre vencido en aplicación | rechazo y ningún guardado | 1 |
+| Conflicto de concurrencia | excepción segura sin detalles de EF o `xmin` | 1 |
+| Cancelación | propagación del token a lectura y guardado | 1 |
+| **Total HU-03 unitarias** | | **11** |
+
+Archivos principales:
+
+- [reglas de publicación](../tests/Licitaciones.UnitTests/Domain/Licitaciones/LicitacionTests.cs);
+- [caso de uso de publicación](../tests/Licitaciones.UnitTests/Application/Licitaciones/PublicarLicitacionServiceTests.cs).
 
 ## HU-01 — Pruebas funcionales
 
@@ -131,6 +151,39 @@ Archivos principales:
 - [API](../tests/Licitaciones.FunctionalTests/Api/Licitaciones/CrearLicitacionEndpointTests.cs);
 - [Web](../tests/Licitaciones.FunctionalTests/Web/Licitaciones/CrearLicitacionWebTests.cs).
 
+## HU-03 — Pruebas funcionales
+
+### API
+
+| Escenario | Casos |
+| --- | ---: |
+| Publicación válida con representación completa | 1 |
+| Identificador que no es UUID | 1 |
+| Licitación inexistente | 1 |
+| Fecha de cierre vencida | 1 |
+| Licitación ya publicada | 1 |
+| Conflicto de concurrencia seguro | 1 |
+| Contrato OpenAPI sin cuerpo y respuestas documentadas | 1 |
+| **Total API** | **7** |
+
+### Web MVC
+
+| Escenario | Casos |
+| --- | ---: |
+| Confirmación con datos de solo lectura y antiforgery | 1 |
+| Publicación válida, PRG, mensaje y botón oculto | 1 |
+| Licitación inexistente | 1 |
+| Fecha vencida sin guardado | 1 |
+| Conflicto con mensaje seguro | 1 |
+| POST sin antiforgery | 1 |
+| **Total Web** | **6** |
+| **Total HU-03 funcionales** | **13** |
+
+Archivos principales:
+
+- [API](../tests/Licitaciones.FunctionalTests/Api/Licitaciones/PublicarLicitacionEndpointTests.cs);
+- [Web](../tests/Licitaciones.FunctionalTests/Web/Licitaciones/PublicarLicitacionWebTests.cs).
+
 ## HU-01 — Pruebas de integración
 
 | Área y escenario | Infraestructura verificada | Casos |
@@ -171,6 +224,26 @@ Archivos principales:
 - [migraciones](../tests/Licitaciones.IntegrationTests/Persistence/MigracionesTests.cs);
 - [API real](../tests/Licitaciones.IntegrationTests/Api/Licitaciones/CrearLicitacionApiTests.cs);
 - [Web real](../tests/Licitaciones.IntegrationTests/Web/Licitaciones/CrearLicitacionWebTests.cs).
+
+## HU-03 — Pruebas de integración
+
+| Área | Infraestructura verificada | Casos nuevos |
+| --- | --- | ---: |
+| Repositorio | publicación, auditoría UTC y cambio de `xmin` en PostgreSQL | 1 |
+| API real | HTTP, aplicación, EF Core, estado persistido y `xmin` | 1 |
+| Web real | antiforgery, PRG, aplicación, PostgreSQL y `xmin` | 1 |
+| **Total HU-03 integración** | | **3** |
+
+La prueba concurrente ya contabilizada en HU-02 se refactorizó para ejecutar
+dos publicaciones sobre copias distintas. Ahora también verifica la traducción
+segura de `DbUpdateConcurrencyException` y confirma con un tercer contexto que
+prevalece el primer cambio, sin contabilizar el mismo caso dos veces.
+
+Archivos principales:
+
+- [repositorio y concurrencia](../tests/Licitaciones.IntegrationTests/Persistence/LicitacionRepositoryTests.cs);
+- [API real](../tests/Licitaciones.IntegrationTests/Api/Licitaciones/PublicarLicitacionApiTests.cs);
+- [Web real](../tests/Licitaciones.IntegrationTests/Web/Licitaciones/PublicarLicitacionWebTests.cs).
 
 ## Ejecución local
 

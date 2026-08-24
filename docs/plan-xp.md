@@ -29,7 +29,7 @@ cada iteración se acuerdan al comenzar esa iteración.
 | Iteración | Objetivo de valor | Candidatos principales | Liberación |
 | --- | --- | --- | --- |
 | XP 1 | Registrar un proveedor por API y MVC con persistencia real | Estructura modular, HU-01, PostgreSQL, CI básica | `v0.1.0` |
-| XP 2 | Preparar y administrar licitaciones antes de recibir ofertas | Crear licitación en Borrador, unicidad de código, presupuesto y fecha; transiciones en una historia separada; primera prueba de navegador | `v0.2.0` |
+| XP 2 | Preparar y publicar licitaciones antes de recibir ofertas | Crear licitación en Borrador, unicidad de código, presupuesto y fecha; publicación como transición separada; primera prueba de navegador | `v0.2.0` |
 | XP 3 | Registrar y evaluar ofertas válidas | Ofertas, restricciones por estado y vencimiento, mejor oferta, clasificación y niveles de aprobación | `v0.3.0` |
 | XP 4 | Completar operación, despliegue y entrega | Tipo de cambio y CRC/USD, operaciones restantes, UX, Docker Compose, Kubernetes, pruebas E2E y documentación final | `v1.0.0` |
 
@@ -62,25 +62,30 @@ MVC o API, aplique las mismas reglas de negocio y persista en PostgreSQL.
 - [x] GitHub Actions pasa tanto en Pull Request como en `main`.
 - [x] La documentación de cierre se integra en `main` mediante el PR #15.
 - [x] Se crea localmente la etiqueta `v0.1.0` desde el commit de cierre.
-- [ ] Se publica la etiqueta `v0.1.0` en GitHub.
+- [x] Se publica la etiqueta `v0.1.0` en GitHub.
 
 ## Plan de la Iteración XP 2
 
 **Inicio observado:** 24 de agosto de 2026.
 
-**Objetivo:** permitir preparar licitaciones antes de publicarlas y fortalecer
-la calidad automatizada del recorrido Web.
+**Objetivo:** permitir preparar y publicar licitaciones antes de recibir ofertas
+y fortalecer la calidad automatizada del recorrido Web.
 
 | Trabajo | Referencia | Prioridad | Estimación | Estado |
 | --- | --- | --- | ---: | --- |
-| HU-02 Crear licitación en Borrador | [#16](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/16) | Alta | 8 puntos | Terminada técnicamente; pendiente de integración |
+| HU-02 Crear licitación en Borrador | [#16](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/16) | Alta | 8 puntos | Terminada e integrada mediante el PR #17 |
+| HU-03 Publicar licitación para recibir ofertas | [#18](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/18) | Alta | 5 puntos | Terminada técnicamente; pendiente de integración |
 | Primera prueba real de navegador | Tarea técnica por crear | Alta | Por estimar | Pendiente |
 | Reporte y puertas de cobertura | Tarea técnica por crear | Alta | Por estimar | Pendiente |
 
 HU-02 incluye código único, título, presupuesto CRC positivo, fecha de cierre,
-estado inicial `Borrador`, auditoría, concurrencia, PostgreSQL, API y MVC. La
-publicación y el cierre se tratarán como historias posteriores por poseer reglas
-de transición propias.
+estado inicial `Borrador`, auditoría, concurrencia, PostgreSQL, API y MVC. Se
+integró en `main` mediante el PR #17, commit `72309f7`.
 
-Los 8 puntos solo se sumarán a la velocidad observada cuando HU-02 esté
-integrada en `main` y su CI sea satisfactoria.
+HU-03 implementa por separado la transición `Borrador` → `Publicada`, exige
+datos válidos y fecha de cierre futura, actualiza la auditoría UTC y conserva el
+control de concurrencia `xmin`. El cierre permanece para una historia posterior.
+
+La velocidad aceptada de la Iteración XP 2 es actualmente de 8 puntos por
+HU-02. Los 5 puntos de HU-03 solo se sumarán después de su integración en
+`main`, una CI satisfactoria y su aceptación.
