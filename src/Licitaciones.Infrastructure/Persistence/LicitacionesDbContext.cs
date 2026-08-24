@@ -1,3 +1,4 @@
+using Licitaciones.Domain.Licitaciones;
 using Licitaciones.Domain.Proveedores;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,8 @@ public sealed class LicitacionesDbContext : DbContext
         : base(options)
     {
     }
+
+    public DbSet<Licitacion> Licitaciones => Set<Licitacion>();
 
     public DbSet<Proveedor> Proveedores => Set<Proveedor>();
 
