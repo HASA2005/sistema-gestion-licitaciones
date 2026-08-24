@@ -1,0 +1,57 @@
+@model Licitaciones.Web.Models.Proveedores.RegistrarProveedorViewModel
+
+@{
+    ViewData["Title"] = "Registrar proveedor";
+}
+
+<div class="row justify-content-center py-4">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h3 mb-3">Registrar proveedor</h1>
+                <p class="text-body-secondary">
+                    Ingrese el nombre con el que se identificará al proveedor.
+                </p>
+
+                @if (TempData["MensajeExito"] is string mensajeExito)
+                {
+                    <div class="alert alert-success" role="status">
+                        @mensajeExito
+                    </div>
+                }
+
+                <form asp-controller="Proveedores"
+                      asp-action="Registrar"
+                      method="post">
+                    <div class="mb-3">
+                        <label asp-for="Nombre" class="form-label">
+                            Nombre <span class="text-danger" aria-hidden="true">*</span>
+                            <span class="visually-hidden">(obligatorio)</span>
+                        </label>
+                        <input asp-for="Nombre"
+                               class="form-control"
+                               autocomplete="organization"
+                               aria-required="true"
+                               aria-describedby="nombre-ayuda nombre-error"
+                               autofocus />
+                        <div id="nombre-ayuda" class="form-text">
+                            Puede usar letras, números, espacios, punto, coma y paréntesis.
+                        </div>
+                        <span asp-validation-for="Nombre"
+                              id="nombre-error"
+                              class="text-danger"
+                              role="alert"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        Registrar proveedor
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

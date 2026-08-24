@@ -19,6 +19,7 @@
     <ProjectReference Include="..\..\src\Licitaciones.Api\Licitaciones.Api.csproj" />
     <ProjectReference Include="..\..\src\Licitaciones.Application\Licitaciones.Application.csproj" />
     <ProjectReference Include="..\..\src\Licitaciones.Domain\Licitaciones.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Licitaciones.Web\Licitaciones.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
