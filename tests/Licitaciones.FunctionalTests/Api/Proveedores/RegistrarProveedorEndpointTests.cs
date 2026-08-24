@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text;
 using Licitaciones.Application.Proveedores;
 using Licitaciones.Domain.Proveedores;
 using Microsoft.AspNetCore.Hosting;
@@ -100,6 +101,40 @@ public sealed class RegistrarProveedorEndpointTests
             "Ya existe un proveedor con el mismo nombre.",
             problema.Detail);
         Assert.Equal("proveedor_duplicado", problema.ErrorCode);
+        Assert.False(string.IsNullOrWhiteSpace(problema.CorrelationId));
+        Assert.Empty(repositorio.Proveedores);
+    }
+
+    [Fact]
+    public async Task Post_ConJsonInvalido_DevuelveBadRequestProblemDetails()
+    {
+        var repositorio = new RepositorioProveedoresEnMemoria();
+
+        await using var aplicacion = new ApiFactory(repositorio);
+        using var cliente = aplicacion.CreateClient();
+        using var contenido = new StringContent(
+            "{\"nombre\":",
+            Encoding.UTF8,
+            "application/json");
+
+        var respuesta = await cliente.PostAsync(
+            "/api/v1/proveedores",
+            contenido);
+
+        Assert.Equal(HttpStatusCode.BadRequest, respuesta.StatusCode);
+        Assert.Equal(
+            "application/problem+json",
+            respuesta.Content.Headers.ContentType?.MediaType);
+
+        var problema = await respuesta.Content
+            .ReadFromJsonAsync<ProblemaRespuesta>();
+        Assert.NotNull(problema);
+        Assert.Equal("Solicitud JSON inválida.", problema.Title);
+        Assert.Equal(400, problema.Status);
+        Assert.Equal(
+            "El cuerpo de la solicitud no contiene un JSON válido.",
+            problema.Detail);
+        Assert.Equal("solicitud_json_invalida", problema.ErrorCode);
         Assert.False(string.IsNullOrWhiteSpace(problema.CorrelationId));
         Assert.Empty(repositorio.Proveedores);
     }
