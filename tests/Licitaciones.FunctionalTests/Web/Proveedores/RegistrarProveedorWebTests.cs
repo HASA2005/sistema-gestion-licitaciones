@@ -39,6 +39,8 @@ public sealed class RegistrarProveedorWebTests
             respuesta.Content.Headers.ContentType?.MediaType);
 
         Assert.Contains("Registrar proveedor", contenido);
+        Assert.Contains("action=\"/proveedores/registrar\"", contenido);
+        Assert.Contains("method=\"post\"", contenido);
         Assert.Contains("name=\"Nombre\"", contenido);
         Assert.Contains("__RequestVerificationToken", contenido);
     }
