@@ -1,0 +1,57 @@
+name: Integración continua
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Compilar y ejecutar pruebas
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Mostrar versión de .NET
+        run: dotnet --info
+
+      - name: Restaurar dependencias
+        run: dotnet restore ./Licitaciones.sln
+
+      - name: Compilar en Release
+        run: dotnet build ./Licitaciones.sln --configuration Release --no-restore
+
+      - name: Verificar Docker para Testcontainers
+        run: docker version
+
+      - name: Ejecutar todas las pruebas
+        run: >-
+          dotnet test ./Licitaciones.sln
+          --configuration Release
+          --no-build
+          --no-restore
+          --logger trx
+          --results-directory ./TestResults
+
+      - name: Publicar resultados de pruebas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultados-pruebas
+          path: TestResults/**/*.trx
+          if-no-files-found: warn
+          retention-days: 7
