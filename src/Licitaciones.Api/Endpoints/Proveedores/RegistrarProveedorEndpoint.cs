@@ -38,27 +38,39 @@ public static class RegistrarProveedorEndpoint
         }
         catch (ProveedorDuplicadoException excepcion)
         {
-            return TypedResults.Problem(
-                title: "Proveedor duplicado.",
-                detail: excepcion.Message,
-                statusCode: StatusCodes.Status409Conflict,
-                extensions: new Dictionary<string, object?>
-                {
-                    ["errorCode"] = "proveedor_duplicado",
-                    ["correlationId"] = contextoHttp.TraceIdentifier
-                });
+            return CrearProblema(
+                contextoHttp,
+                StatusCodes.Status409Conflict,
+                "Proveedor duplicado.",
+                excepcion.Message,
+                "proveedor_duplicado");
         }
         catch (ArgumentException excepcion)
         {
-            return TypedResults.Problem(
-                title: "Datos del proveedor inválidos.",
-                detail: excepcion.Message,
-                statusCode: StatusCodes.Status422UnprocessableEntity,
-                extensions: new Dictionary<string, object?>
-                {
-                    ["errorCode"] = "proveedor_nombre_invalido",
-                    ["correlationId"] = contextoHttp.TraceIdentifier
-                });
+            return CrearProblema(
+                contextoHttp,
+                StatusCodes.Status422UnprocessableEntity,
+                "Datos del proveedor inválidos.",
+                excepcion.Message,
+                "proveedor_nombre_invalido");
         }
+    }
+
+    private static IResult CrearProblema(
+        HttpContext contextoHttp,
+        int estado,
+        string titulo,
+        string detalle,
+        string codigoError)
+    {
+        return TypedResults.Problem(
+            title: titulo,
+            detail: detalle,
+            statusCode: estado,
+            extensions: new Dictionary<string, object?>
+            {
+                ["errorCode"] = codigoError,
+                ["correlationId"] = contextoHttp.TraceIdentifier
+            });
     }
 }
