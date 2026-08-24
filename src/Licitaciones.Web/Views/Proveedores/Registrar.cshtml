@@ -13,6 +13,13 @@
                     Ingrese el nombre con el que se identificará al proveedor.
                 </p>
 
+                @if (TempData["MensajeExito"] is string mensajeExito)
+                {
+                    <div class="alert alert-success" role="status">
+                        @mensajeExito
+                    </div>
+                }
+
                 <form asp-controller="Proveedores"
                       asp-action="Registrar"
                       method="post">
