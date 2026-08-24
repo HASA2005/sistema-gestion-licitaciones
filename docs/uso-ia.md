@@ -55,7 +55,7 @@ Entre las decisiones contrastadas se encuentran:
 - conservar los espacios internos del código porque el requisito solo elimina
   espacios laterales;
 - impedir que API o MVC seleccionen un estado inicial diferente de `Borrador`;
-- sembrar los estados y proteger el código mediante un índice único.
+- sembrar los estados y proteger el código mediante un índice único;
 - limitar código y título para evitar errores del índice de PostgreSQL;
 - exigir zona horaria explícita en las fechas recibidas por la API.
 
@@ -64,6 +64,37 @@ decimales en MVC, el acceso al modelo de diseño requerido para inspeccionar
 restricciones `CHECK` en EF Core 9, textos sin longitud máxima, fechas API sin
 zona explícita y detalles técnicos en errores. Después de las correcciones se
 ejecutaron 118 casos: 53 unitarios, 52 funcionales y 13 de integración.
+
+## Asistencia durante HU-03
+
+Codex ayudó a contrastar la Issue #18 con la documentación y el código de
+HU-02, proponer criterios verificables y preparar para revisión los cambios de
+dominio, aplicación, persistencia, API, MVC, pruebas y documentación. La
+prioridad alta y la estimación inicial de 5 puntos proceden del Planning Game,
+no de la herramienta.
+
+Entre las decisiones revisadas se encuentran:
+
+- modelar la publicación como una transición explícita de `Borrador` a
+  `Publicada`, separada de la creación y sin aceptar campos editables;
+- considerar inválida una fecha de cierre igual o anterior al instante de
+  publicación;
+- usar `TimeProvider` para comprobar el tiempo de forma determinista y guardar
+  `UpdatedAt` en UTC;
+- distinguir identificador inválido, licitación inexistente, estado no
+  publicable, datos no publicables y conflicto de concurrencia mediante códigos
+  Problem Details estables;
+- comprobar la actualización con PostgreSQL real y dos contextos que compiten
+  sobre el mismo `xmin`;
+- usar una vista MVC de confirmación con datos de solo lectura, antiforgery y
+  POST-Redirect-GET;
+- redirigir la creación exitosa hacia la confirmación del Borrador recién
+  creado, sin incorporar un listado general fuera del alcance.
+
+Después de revisar y ejecutar la solución completa, el resultado consolidado es
+de 145 casos: 64 unitarios, 65 funcionales y 16 de integración. Las decisiones
+propuestas por la herramienta se aceptaron únicamente después de comprobarlas
+mediante código, revisión y pruebas automatizadas.
 
 ## Ejemplos de corrección mediante evidencia
 

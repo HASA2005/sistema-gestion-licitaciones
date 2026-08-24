@@ -2,10 +2,11 @@
 
 ## Propósito y corte de evidencia
 
-Esta bitácora registra el trabajo verificable de la Iteración XP 1. El corte
-técnico corresponde a `main` en el commit `8be5992`, integrado el 23 de agosto
-de 2026. El cierre documental se prepara el 24 de agosto de 2026 mediante la
-tarea técnica [#14](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/14).
+Esta bitácora registra el trabajo verificable de las iteraciones XP 1 y XP 2.
+El corte integrado más reciente corresponde a `main` en el commit `72309f7`,
+que incorporó HU-02 mediante el PR #17. HU-03 se documenta como terminada
+técnicamente en `feat/18-publicar-licitacion`; todavía no se presenta como
+integrada ni aceptada.
 
 No se agregan estimaciones, opiniones del cliente ni resultados de aceptación
 que no hayan quedado registrados durante el trabajo.
@@ -142,14 +143,12 @@ registrarán en el Issue antes de comenzar para obtener una velocidad comparable
 ## Pequeña liberación de la Iteración XP 1
 
 La documentación se integró en `main` mediante el PR #15, commit `2117778`. La
-etiqueta anotada `v0.1.0` fue creada localmente sobre ese commit el 24 de agosto
-de 2026. En el corte de esta bitácora todavía falta publicarla en GitHub, por lo
-que no se presenta como una liberación remota disponible.
+etiqueta anotada `v0.1.0` fue creada sobre ese commit el 24 de agosto de 2026 y
+posteriormente se publicó en GitHub.
 
 ## Iteración XP 2 — trabajo en curso
 
-**Objetivo:** preparar licitaciones en Borrador antes de publicar y recibir
-ofertas.
+**Objetivo:** preparar y publicar licitaciones antes de recibir ofertas.
 
 **Inicio observado:** 24 de agosto de 2026.
 
@@ -157,12 +156,19 @@ ofertas.
 
 | Historia | Referencia | Prioridad | Estimación | Estado en el corte |
 | --- | --- | --- | ---: | --- |
-| Crear licitación en estado Borrador | [#16](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/16) | Alta | 8 puntos | Terminada técnicamente; pendiente de integración |
+| Crear licitación en estado Borrador | [#16](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/16) | Alta | 8 puntos | Terminada e integrada mediante el PR #17 |
+| Publicar licitación para recibir ofertas | [#18](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/18) | Alta | 5 puntos | Terminada técnicamente; pendiente de integración |
 
 Antes de programar se acordaron campos obligatorios, unicidad del código,
 presupuesto CRC positivo, estado inicial, auditoría, concurrencia, API, MVC y el
 alcance excluido. La fecha futura se reservó para publicar; no se impuso al
 guardar un Borrador.
+
+Para HU-03 se acordó una transición explícita de `Borrador` a `Publicada`, sin
+editar los datos en la misma operación. La fecha de cierre debe ser
+estrictamente futura, `UpdatedAt` se registra en UTC y una versión `xmin`
+obsoleta debe producir un conflicto seguro. La API usa
+`POST /api/v1/licitaciones/{id}/publicar` sin cuerpo.
 
 ### Resultado técnico de HU-02
 
@@ -178,28 +184,57 @@ guardar un Borrador.
 - 72 casos nuevos: 30 unitarios, 35 funcionales y 7 de integración.
 - Resultado acumulado local: 118 casos correctos.
 
+HU-02 se integró mediante el PR #17 en el commit `72309f7`. Por ello sus 8
+puntos ya forman parte de la velocidad aceptada de la iteración.
+
 Las pruebas de HU-02 se prepararon junto con su implementación en bloques por
 capa. No se registra un commit RED independiente ni se afirma un fallo
-intermedio que no haya quedado evidenciado. Los casos automatizados y
-PostgreSQL real verifican el comportamiento final; la CI del Pull Request
-confirmará el resultado en un entorno limpio.
+intermedio que no haya quedado evidenciado. Los casos automatizados,
+PostgreSQL real y la integración mediante el PR #17 verificaron el
+comportamiento final.
 
 Una revisión cruzada antes de integrar endureció longitudes, caracteres de
 control, equivalencia Unicode, fechas API con zona explícita, respuestas `415`
 y mensajes sin detalles técnicos. Las rutas continúan anónimas porque identidad
-y autorización no forman parte de HU-02; esa deuda debe resolverse antes de un
-despliegue real.
+y autorización no forman parte de estas historias; esa deuda debe resolverse
+antes de un despliegue real.
 
-### Velocidad provisional
+### Resultado técnico de HU-03
 
-HU-02 fue planificada en 8 puntos. La velocidad aceptada de la Iteración XP 2
-permanece en 0 puntos hasta integrar la historia y recibir una ejecución
-satisfactoria de CI. Después de la integración será de 8 puntos, salvo que la
-retroalimentación requiera reabrirla.
+- El dominio solo permite publicar desde `Borrador`, exige datos válidos y una
+  fecha de cierre futura, cambia el estado a `Publicada` y actualiza
+  `UpdatedAt` en UTC.
+- El servicio usa un reloj inyectable y distingue licitación inexistente,
+  publicación inválida y conflicto de concurrencia.
+- El repositorio carga por identificador, guarda la entidad rastreada y traduce
+  el conflicto `xmin` a un mensaje seguro.
+- Una prueba con PostgreSQL verifica estado, auditoría y cambio de versión; otra
+  usa dos contextos y comprueba que el primer cambio se conserva.
+- La API expone `POST /api/v1/licitaciones/{id}/publicar` sin cuerpo, devuelve
+  `200` con la representación publicada y usa Problem Details para `400`,
+  `404`, `409` y `422`.
+- La Web expone GET y POST `/licitaciones/{id}/publicar`, presenta los datos en
+  hora de Costa Rica, valida antiforgery y aplica POST-Redirect-GET con mensajes
+  seguros mediante `TempData`.
+- Después de crear un Borrador, el formulario redirige directamente a su vista
+  de confirmación de publicación.
+- Un recorrido Web con PostgreSQL real comprueba antiforgery, PRG, mensaje,
+  estado, auditoría UTC y cambio de `xmin`.
+
+La verificación consolidada de HU-03 deja 145 casos correctos: 64 unitarios, 65
+funcionales y 16 de integración. El incremento neto frente al cierre de HU-02
+es de 27 casos y cubre dominio, aplicación, API, MVC y PostgreSQL real.
+
+### Velocidad observada
+
+HU-02 fue planificada en 8 puntos y ya está integrada, por lo que la velocidad
+aceptada de la Iteración XP 2 es actualmente de 8 puntos. Los 5 puntos de HU-03
+permanecen pendientes hasta su integración, CI satisfactoria y aceptación.
 
 ### Próximos ajustes
 
-- Publicar y cerrar licitaciones se implementarán en historias separadas.
+- Ejecutar la verificación consolidada e integrar HU-03; el cierre se
+  implementará en otra historia.
 - Se debe crear una tarea técnica para la primera prueba de navegador con
   Playwright o Selenium.
 - Se debe configurar cobertura y sus puertas mínimas antes de cerrar la

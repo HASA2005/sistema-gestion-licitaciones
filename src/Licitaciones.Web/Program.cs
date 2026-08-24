@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<CrearLicitacionService>();
+builder.Services.AddScoped<PublicarLicitacionService>();
 builder.Services.AddScoped<RegistrarProveedorService>();
 builder.Services.AddInfrastructure(
     builder.Configuration.GetConnectionString("Licitaciones")

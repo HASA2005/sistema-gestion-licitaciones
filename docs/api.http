@@ -12,6 +12,7 @@ Accept: application/json
 ###
 
 # Crear licitación en Borrador
+# @name crearLicitacion
 POST {{host}}/api/v1/licitaciones
 Content-Type: application/json
 Accept: application/json
@@ -22,6 +23,12 @@ Accept: application/json
   "presupuestoEstimadoCrc": 1250000.50,
   "fechaCierre": "2030-10-15T18:30:00-06:00"
 }
+
+###
+
+# Publicar el Borrador creado por la solicitud anterior
+POST {{host}}/api/v1/licitaciones/{{crearLicitacion.response.body.$.id}}/publicar
+Accept: application/json
 
 ###
 

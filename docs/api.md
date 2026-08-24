@@ -3,8 +3,8 @@
 ## Estado actual
 
 La API usa rutas versionadas bajo `/api/v1`, DTO específicos, OpenAPI y
-respuestas Problem Details. Actualmente existen dos operaciones de creación; el
-resto de los endpoints exigidos se incorporará con sus historias funcionales.
+respuestas Problem Details. Actualmente permite registrar proveedores, crear
+licitaciones en Borrador y publicar una licitación existente.
 
 En ambiente `Development`, el documento OpenAPI está disponible en:
 
@@ -15,9 +15,10 @@ En ambiente `Development`, el documento OpenAPI está disponible en:
 ## Colección reproducible
 
 La colección [api.http](api.http) contiene el host local, encabezados y cuerpos
-completos para registrar un proveedor, crear una licitación y consultar
-OpenAPI. Puede ejecutarse desde un editor compatible con archivos `.http`
-después de iniciar la API en `http://localhost:5018`.
+completos para registrar un proveedor, crear una licitación, publicar el
+Borrador recién creado y consultar OpenAPI. Puede ejecutarse desde un editor
+compatible con archivos `.http` después de iniciar la API en
+`http://localhost:5018`.
 
 ## Endpoints implementados
 
@@ -25,6 +26,7 @@ después de iniciar la API en `http://localhost:5018`.
 | --- | --- | ---: | --- |
 | `POST` | `/api/v1/proveedores` | `201` | Registrar un proveedor. |
 | `POST` | `/api/v1/licitaciones` | `201` | Crear una licitación en Borrador. |
+| `POST` | `/api/v1/licitaciones/{id}/publicar` | `200` | Cambiar una licitación válida de Borrador a Publicada. |
 
 ## Crear proveedor
 
@@ -81,6 +83,43 @@ Errores propios: `409 licitacion_codigo_duplicado` y
 `415 tipo_contenido_no_compatible`; JSON inválido o una fecha sin zona produce
 `400 solicitud_json_invalida`.
 
+## Publicar licitación
+
+```http
+POST /api/v1/licitaciones/2f24118b-6541-4c2c-8cd8-9c86e49299f1/publicar
+Accept: application/json
+```
+
+La operación no recibe cuerpo ni datos editables. El identificador forma parte
+de la ruta y debe ser un UUID válido. Una publicación correcta devuelve
+`200 OK`:
+
+```json
+{
+  "id": "2f24118b-6541-4c2c-8cd8-9c86e49299f1",
+  "codigo": "LIC-2030-001",
+  "titulo": "Compra de equipo informático",
+  "presupuestoEstimadoCrc": 1250000.50,
+  "fechaCierre": "2030-10-16T00:30:00+00:00",
+  "estado": "Publicada",
+  "updatedAt": "2026-08-24T20:30:00+00:00",
+  "mensaje": "Licitación publicada correctamente."
+}
+```
+
+La fecha de cierre debe ser estrictamente posterior al instante de publicación.
+El servidor actualiza `updatedAt` en UTC y usa `xmin` para impedir que una copia
+obsoleta sobrescriba otra actualización.
+
+| Estado | Situación | `errorCode` |
+| ---: | --- | --- |
+| `400` | El valor `{id}` no es un UUID | `identificador_licitacion_invalido` |
+| `404` | No existe la licitación | `licitacion_no_encontrada` |
+| `409` | La licitación no se encuentra en Borrador | `licitacion_estado_no_publicable` |
+| `409` | Otra operación actualizó la misma fila | `licitacion_conflicto_concurrencia` |
+| `422` | Los datos no permiten publicar o la fecha de cierre no es futura | `licitacion_datos_no_publicables` |
+| `500` | Error inesperado | `error_interno` |
+
 ## Contrato Problem Details
 
 Los errores controlados usan `application/problem+json` y contienen, como
@@ -102,8 +141,8 @@ consultas, nombres internos de parámetros ni secretos.
 
 ## Pendiente
 
-Todavía no están implementados listados, consulta por identificador, edición,
-eliminación, cambios de estado, ofertas, mejor oferta, niveles de aprobación ni
+Todavía no están implementados listados, consulta general por identificador,
+edición, eliminación, cierre, ofertas, mejor oferta, niveles de aprobación ni
 tipos de cambio. Cuando existan listados deberán incorporar paginación,
 filtrado y ordenamiento.
 

@@ -71,7 +71,7 @@ y TT-04 [#11](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/11
 | Iteración | Iteración XP 2 |
 | Prioridad | Alta |
 | Estimación inicial | 8 puntos |
-| Estado | Terminada técnicamente; pendiente de integración en `main` |
+| Estado | Terminada e integrada en `main` mediante el PR [#17](https://github.com/HASA2005/sistema-gestion-licitaciones/pull/17) |
 
 **Historia**
 
@@ -119,10 +119,79 @@ Las pruebas principales se encuentran en:
 Publicar, cerrar, listar, editar, eliminar y gestionar ofertas permanecen fuera
 de HU-02.
 
+HU-02 se integró en `main` mediante el PR
+[#17](https://github.com/HASA2005/sistema-gestion-licitaciones/pull/17), commit
+`72309f7`.
+
+## HU-03 Publicar licitación para recibir ofertas
+
+| Campo | Valor |
+| --- | --- |
+| Issue | [#18](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/18) |
+| Iteración | Iteración XP 2 |
+| Prioridad | Alta |
+| Estimación inicial | 5 puntos |
+| Estado | Terminada técnicamente; pendiente de integración en `main` |
+
+**Historia**
+
+Como encargado de compras, quiero publicar una licitación que se encuentra en
+Borrador, para permitir posteriormente el registro de ofertas.
+
+### Decisiones de alcance
+
+La publicación es una transición explícita de `Borrador` a `Publicada`; la
+operación no recibe datos para editar la licitación. El instante actual procede
+de un reloj inyectable, se compara en UTC y debe ser estrictamente anterior a
+`FechaCierre`. Una fecha igual al instante de publicación ya no es futura.
+
+El control de concurrencia continúa apoyándose en `xmin`. Una actualización con
+una versión obsoleta se traduce a un conflicto controlado y no expone detalles
+de Entity Framework Core ni PostgreSQL.
+
+### Criterios de aceptación y evidencia técnica
+
+| Criterio | Resultado en la rama | Evidencia principal |
+| --- | --- | --- |
+| Solo una licitación en `Borrador` puede publicarse | Implementado | `Licitacion.Publicar` y pruebas de dominio |
+| Código, título, presupuesto y fecha de cierre deben ser válidos | Implementado | Invariantes de HU-02 y validación previa a la transición |
+| La fecha de cierre debe ser estrictamente futura | Implementado | Casos de fecha igual, vencida y futura en dominio, aplicación y API |
+| Una publicación válida cambia el estado a `Publicada` | Implementado | Pruebas de dominio, servicio y endpoint |
+| `UpdatedAt` se actualiza en UTC sin alterar los demás datos | Implementado | Reloj inyectable y respuesta HTTP con `updatedAt` |
+| Una licitación `Publicada` o `Cerrada` no puede publicarse nuevamente | Implementado por la regla de estado | Toda condición distinta de `Borrador` se rechaza antes de modificar la entidad |
+| Una licitación inexistente produce un `404` controlado | Implementado | `LicitacionNoEncontradaException` y `licitacion_no_encontrada` |
+| Los intentos inválidos no guardan cambios | Implementado | Pruebas de dominio, aplicación y API |
+| Las actualizaciones concurrentes se protegen mediante `xmin` | Implementado | Dos contextos PostgreSQL, traducción controlada y conservación del primer cambio |
+| La API expone `POST /api/v1/licitaciones/{id}/publicar` sin cuerpo | Implementado | Endpoint funcional y contrato OpenAPI |
+| La interfaz MVC permite confirmar y publicar con antiforgery | Implementado | GET/POST, PRG, `TempData` y pruebas funcionales y PostgreSQL real |
+| Los errores de API usan Problem Details sin revelar información técnica | Implementado | Pruebas funcionales de `400`, `404`, `409` y `422` |
+| Se incluyen pruebas unitarias, funcionales y de integración | Implementado | 145 casos consolidados: 64 unitarios, 65 funcionales y 16 de integración |
+
+Las pruebas disponibles durante el desarrollo se encuentran en:
+
+- [dominio](../tests/Licitaciones.UnitTests/Domain/Licitaciones/LicitacionTests.cs);
+- [aplicación](../tests/Licitaciones.UnitTests/Application/Licitaciones/PublicarLicitacionServiceTests.cs);
+- [API funcional](../tests/Licitaciones.FunctionalTests/Api/Licitaciones/PublicarLicitacionEndpointTests.cs);
+- [Web funcional](../tests/Licitaciones.FunctionalTests/Web/Licitaciones/PublicarLicitacionWebTests.cs);
+- [repositorio PostgreSQL](../tests/Licitaciones.IntegrationTests/Persistence/LicitacionRepositoryTests.cs);
+- [API con PostgreSQL](../tests/Licitaciones.IntegrationTests/Api/Licitaciones/PublicarLicitacionApiTests.cs);
+- [Web con PostgreSQL](../tests/Licitaciones.IntegrationTests/Web/Licitaciones/PublicarLicitacionWebTests.cs).
+
+Cerrar, editar, eliminar, registrar ofertas, seleccionar la mejor oferta y
+agregar autenticación o autorización permanecen fuera de HU-03. Los listados y
+la consulta general tampoco se incorporan; la Web solo consultará lo necesario
+para confirmar la publicación.
+
+La solución completa ejecuta 145 casos: 64 unitarios, 65 funcionales y 16 de
+integración. HU-03 representa un incremento neto de 27 casos sobre el cierre de
+HU-02 y cubre dominio, aplicación, API, MVC y PostgreSQL real.
+
 ## Aprendizaje de estimación
 
 La Iteración XP 1 no dejó una estimación relativa registrada antes del inicio de
 HU-01. No se asignan puntos retrospectivos porque alterarían la evidencia real.
 HU-02 corrigió ese hallazgo: la Issue #16 registró prioridad alta, estimación de
-8 puntos y criterios verificables antes de comenzar. Los puntos se contabilizan
-como velocidad únicamente después de integrar y aceptar la historia.
+8 puntos y criterios verificables antes de comenzar. Sus 8 puntos se aceptaron
+después de integrarla mediante el PR #17. HU-03 mantiene la práctica con 5
+puntos registrados antes de iniciar y no se sumará a la velocidad hasta su
+integración y aceptación.

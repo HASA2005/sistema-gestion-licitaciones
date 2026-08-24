@@ -95,11 +95,11 @@ public sealed class CrearLicitacionWebTests
         Assert.True(
             respuesta.StatusCode == HttpStatusCode.Redirect,
             $"Se esperaba redirección, pero se obtuvo {(int)respuesta.StatusCode}. Cuerpo: {contenidoPost}");
+        var guardada = Assert.Single(repositorio.Licitaciones);
         Assert.Equal(
-            "/licitaciones/crear",
+            $"/licitaciones/{guardada.Id}/publicar",
             respuesta.Headers.Location?.OriginalString);
 
-        var guardada = Assert.Single(repositorio.Licitaciones);
         Assert.Equal("LIC-2026-017", guardada.Codigo);
         Assert.Equal("LIC-2026-017", guardada.CodigoNormalizado);
         Assert.Equal("Compra de equipo", guardada.Titulo);
@@ -327,8 +327,10 @@ public sealed class CrearLicitacionWebTests
                     .UseEphemeralDataProtectionProvider();
                 services.RemoveAll<ILicitacionRepository>();
                 services.RemoveAll<CrearLicitacionService>();
+                services.RemoveAll<PublicarLicitacionService>();
                 services.AddSingleton(_repositorio);
                 services.AddScoped<CrearLicitacionService>();
+                services.AddScoped<PublicarLicitacionService>();
             });
         }
     }
@@ -354,6 +356,21 @@ public sealed class CrearLicitacionWebTests
             CancellationToken cancellationToken = default)
         {
             Licitaciones.Add(licitacion);
+            return Task.CompletedTask;
+        }
+
+        public Task<Licitacion?> ObtenerPorIdAsync(
+            Guid id,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(
+                Licitaciones.SingleOrDefault(licitacion => licitacion.Id == id));
+        }
+
+        public Task GuardarCambiosAsync(
+            Licitacion licitacion,
+            CancellationToken cancellationToken = default)
+        {
             return Task.CompletedTask;
         }
     }

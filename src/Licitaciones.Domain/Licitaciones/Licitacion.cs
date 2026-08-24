@@ -159,6 +159,44 @@ public sealed class Licitacion
     }
 
     /// <summary>
+    /// Publica la licitación cuando se encuentra en Borrador y su cierre es futuro.
+    /// </summary>
+    /// <param name="fechaActual">Instante utilizado para comprobar las reglas y actualizar la auditoría.</param>
+    /// <exception cref="PublicacionLicitacionInvalidaException">
+    /// La licitación no está en Borrador o su fecha de cierre no es futura.
+    /// </exception>
+    public void Publicar(DateTimeOffset fechaActual)
+    {
+        if (Estado != EstadoLicitacion.Borrador)
+        {
+            throw new PublicacionLicitacionInvalidaException(
+                MotivoPublicacionInvalida.Estado,
+                "Solo se pueden publicar licitaciones en estado Borrador.");
+        }
+
+        if (string.IsNullOrWhiteSpace(Codigo) ||
+            string.IsNullOrWhiteSpace(Titulo) ||
+            PresupuestoEstimadoCrc <= 0 ||
+            FechaCierre == default)
+        {
+            throw new PublicacionLicitacionInvalidaException(
+                MotivoPublicacionInvalida.Datos,
+                "La licitación debe tener código, título, presupuesto y fecha de cierre válidos para publicarse.");
+        }
+
+        var fechaActualUtc = fechaActual.ToUniversalTime();
+        if (FechaCierre <= fechaActualUtc)
+        {
+            throw new PublicacionLicitacionInvalidaException(
+                MotivoPublicacionInvalida.FechaCierre,
+                "La fecha de cierre debe ser futura para publicar la licitación.");
+        }
+
+        Estado = EstadoLicitacion.Publicada;
+        UpdatedAt = fechaActualUtc;
+    }
+
+    /// <summary>
     /// Obtiene el identificador único de la licitación.
     /// </summary>
     public Guid Id { get; private set; }

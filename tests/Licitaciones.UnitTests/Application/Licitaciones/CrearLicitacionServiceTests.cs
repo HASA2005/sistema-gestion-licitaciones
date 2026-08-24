@@ -121,6 +121,21 @@ public sealed class CrearLicitacionServiceTests
             Licitaciones.Add(licitacion);
             return Task.CompletedTask;
         }
+
+        public Task<Licitacion?> ObtenerPorIdAsync(
+            Guid licitacionId,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(
+                Licitaciones.SingleOrDefault(item => item.Id == licitacionId));
+        }
+
+        public Task GuardarCambiosAsync(
+            Licitacion licitacion,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 
     private sealed class RelojFijo(DateTimeOffset fechaActual) : TimeProvider

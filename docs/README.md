@@ -6,14 +6,14 @@ pequeñas liberaciones.
 
 ## Estado documentado
 
-HU-01 — Registrar proveedor está integrada en `main`. HU-02 — Crear licitación
-en estado Borrador está terminada técnicamente en su rama y pendiente de
-integración. Ambas incluyen dominio, aplicación, PostgreSQL, API, MVC y pruebas
-automatizadas.
+HU-01 — Registrar proveedor y HU-02 — Crear licitación en estado Borrador están
+integradas en `main`. HU-02 se incorporó mediante el PR #17. HU-03 — Publicar
+licitación para recibir ofertas está terminada técnicamente en su rama y
+pendiente de integración; incluye dominio, aplicación, PostgreSQL, API, MVC y
+pruebas automatizadas.
 
-`v0.1.0` fue etiquetada localmente sobre el cierre de la Iteración XP 1 y está
-pendiente de publicación en GitHub. El sistema completo todavía no está
-terminado.
+`v0.1.0` identifica el cierre de la Iteración XP 1 y ya está publicada en
+GitHub. El sistema completo todavía no está terminado.
 
 ## Índice
 
@@ -26,7 +26,7 @@ terminado.
 - [Estrategia de pruebas](pruebas.md): niveles, casos ejecutados y CI.
 - [API REST](api.md): endpoints, contratos, colección reproducible y errores.
 - [Módulo de licitaciones](modulos/licitaciones.md): creación de Borradores,
-  fechas, dinero y persistencia.
+  publicación, fechas, dinero y persistencia.
 - [Módulo de proveedores](modulos/proveedores.md): diseño y contrato del primer
   recorrido vertical.
 - [Desarrollo local](desarrollo-local.md): configuración segura de PostgreSQL y
@@ -39,9 +39,10 @@ terminado.
 - Plataforma: .NET 9.
 - Persistencia: Entity Framework Core 9 y PostgreSQL 16.
 - Interfaz Web: ASP.NET Core MVC.
-- API: creación de proveedores y licitaciones bajo `/api/v1`.
-- Pruebas: 118 casos xUnit registrados.
-- Integración: once pruebas usan PostgreSQL 16 mediante Testcontainers.
+- API: creación de proveedores y licitaciones, más publicación, bajo `/api/v1`.
+- Pruebas: 145 casos xUnit: 64 unitarios, 65 funcionales y 16 de integración.
+- Integración: catorce pruebas usan Testcontainers con PostgreSQL 16 y dos
+  inspeccionan los metadatos del modelo EF Core.
 - CI: GitHub Actions compila en Release y ejecuta la solución completa.
 
 ## Convenciones

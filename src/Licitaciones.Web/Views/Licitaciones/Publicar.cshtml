@@ -1,0 +1,84 @@
+@model Licitaciones.Web.Models.Licitaciones.PublicarLicitacionViewModel
+
+@{
+    ViewData["Title"] = "Publicar licitación";
+}
+
+<div class="row justify-content-center py-4">
+    <div class="col-12 col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h3 mb-3">Publicar licitación</h1>
+
+                @if (TempData["MensajeExito"] is string mensajeExito)
+                {
+                    <div class="alert alert-success" role="status">
+                        @mensajeExito
+                    </div>
+                }
+
+                @if (TempData["MensajeError"] is string mensajeError)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @mensajeError
+                    </div>
+                }
+
+                <p class="text-secondary">
+                    Revise los datos antes de cambiar el estado de la licitación.
+                </p>
+
+                <dl class="row mb-4">
+                    <dt class="col-sm-4">Código</dt>
+                    <dd class="col-sm-8">@Model.Codigo</dd>
+
+                    <dt class="col-sm-4">Título</dt>
+                    <dd class="col-sm-8">@Model.Titulo</dd>
+
+                    <dt class="col-sm-4">Presupuesto estimado</dt>
+                    <dd class="col-sm-8">₡@Model.PresupuestoEstimadoCrc.ToString("N2")</dd>
+
+                    <dt class="col-sm-4">Fecha de cierre</dt>
+                    <dd class="col-sm-8">
+                        @Model.FechaCierreCostaRica.ToString("dd/MM/yyyy HH:mm") (Costa Rica)
+                    </dd>
+
+                    <dt class="col-sm-4">Estado</dt>
+                    <dd class="col-sm-8"><strong>@Model.Estado</strong></dd>
+                </dl>
+
+                @if (Model.PuedePublicarse)
+                {
+                    <div class="alert alert-warning" role="note">
+                        Al publicar, la licitación quedará disponible para recibir ofertas.
+                    </div>
+
+                    <form asp-controller="Licitaciones"
+                          asp-action="PublicarConfirmado"
+                          asp-route-id="@Model.Id"
+                          method="post">
+                        <button type="submit" class="btn btn-primary">
+                            Publicar licitación
+                        </button>
+                        <a asp-controller="Licitaciones"
+                           asp-action="Crear"
+                           class="btn btn-outline-secondary ms-2">
+                            Volver
+                        </a>
+                    </form>
+                }
+                else
+                {
+                    <div class="alert alert-info" role="status">
+                        Esta licitación ya no está disponible para publicación.
+                    </div>
+                    <a asp-controller="Licitaciones"
+                       asp-action="Crear"
+                       class="btn btn-outline-primary">
+                        Crear otra licitación
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
