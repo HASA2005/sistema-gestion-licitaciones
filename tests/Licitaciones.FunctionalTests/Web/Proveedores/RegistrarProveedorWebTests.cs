@@ -83,6 +83,28 @@ public sealed class RegistrarProveedorWebTests
         Assert.Contains("Proveedor registrado correctamente.", contenido);
     }
 
+    [Fact]
+    public async Task Post_SinTokenAntiforgery_DevuelveBadRequestYNoGuarda()
+    {
+        var repositorio = new RepositorioProveedoresEnMemoria();
+
+        await using var aplicacion = new WebFactory(repositorio);
+        using var cliente = aplicacion.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false,
+            BaseAddress = new Uri("https://localhost")
+        });
+        using var datos = new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["Nombre"] = "Empresa Central"
+        });
+
+        var respuesta = await cliente.PostAsync("/proveedores/registrar", datos);
+
+        Assert.Equal(HttpStatusCode.BadRequest, respuesta.StatusCode);
+        Assert.Empty(repositorio.Proveedores);
+    }
+
     private static string ExtraerTokenAntiforgery(string contenido)
     {
         var coincidencia = PatronTokenAntiforgery.Match(contenido);
