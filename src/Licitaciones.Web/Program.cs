@@ -4,11 +4,14 @@ using Licitaciones.Application.Ofertas;
 using Licitaciones.Application.Aprobaciones;
 using Licitaciones.Application.TiposCambio;
 using Licitaciones.Infrastructure;
+using Licitaciones.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHealthChecks();
 builder.Services.AddScoped<CrearLicitacionService>();
 builder.Services.AddScoped<PublicarLicitacionService>();
 builder.Services.AddScoped<RegistrarProveedorService>();
@@ -21,6 +24,12 @@ builder.Services.AddInfrastructure(
             "Debe configurar ConnectionStrings:Licitaciones."));
 
 var app = builder.Build();
+
+if (app.Environment.IsProduction())
+{
+    using var scope = app.Services.CreateScope();
+    await scope.ServiceProvider.GetRequiredService<LicitacionesDbContext>().Database.MigrateAsync();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -41,6 +50,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
+app.MapHealthChecks("/health");
 
 
 app.Run();
