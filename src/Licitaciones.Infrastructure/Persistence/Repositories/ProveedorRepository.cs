@@ -9,6 +9,8 @@ namespace Licitaciones.Infrastructure.Persistence.Repositories;
 public sealed class ProveedorRepository(
     LicitacionesDbContext contexto) : IProveedorRepository
 {
+    public Task<Proveedor?> ObtenerPorIdAsync(Guid id, CancellationToken cancellationToken = default) =>
+        contexto.Proveedores.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
     public Task<bool> ExisteConNombreNormalizadoAsync(
         string nombreNormalizado,
         CancellationToken cancellationToken = default)
