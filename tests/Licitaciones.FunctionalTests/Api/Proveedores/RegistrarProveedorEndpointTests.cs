@@ -71,6 +71,39 @@ public sealed class RegistrarProveedorEndpointTests
         Assert.Empty(repositorio.Proveedores);
     }
 
+    [Fact]
+    public async Task Post_ConNombreDuplicado_DevuelveConflictProblemDetails()
+    {
+        var repositorio = new RepositorioProveedoresEnMemoria
+        {
+            LanzarDuplicadoAlAgregar = true
+        };
+
+        await using var aplicacion = new ApiFactory(repositorio);
+        using var cliente = aplicacion.CreateClient();
+
+        var respuesta = await cliente.PostAsJsonAsync(
+            "/api/v1/proveedores",
+            new { nombre = "Empresa Central" });
+
+        Assert.Equal(HttpStatusCode.Conflict, respuesta.StatusCode);
+        Assert.Equal(
+            "application/problem+json",
+            respuesta.Content.Headers.ContentType?.MediaType);
+
+        var problema = await respuesta.Content
+            .ReadFromJsonAsync<ProblemaRespuesta>();
+        Assert.NotNull(problema);
+        Assert.Equal("Proveedor duplicado.", problema.Title);
+        Assert.Equal(409, problema.Status);
+        Assert.Equal(
+            "Ya existe un proveedor con el mismo nombre.",
+            problema.Detail);
+        Assert.Equal("proveedor_duplicado", problema.ErrorCode);
+        Assert.False(string.IsNullOrWhiteSpace(problema.CorrelationId));
+        Assert.Empty(repositorio.Proveedores);
+    }
+
     private sealed record RegistrarProveedorRespuesta(string Mensaje);
 
     private sealed record ProblemaRespuesta(
@@ -102,6 +135,8 @@ public sealed class RegistrarProveedorEndpointTests
     {
         public List<Proveedor> Proveedores { get; } = [];
 
+        public bool LanzarDuplicadoAlAgregar { get; init; }
+
         public Task<bool> ExisteConNombreNormalizadoAsync(
             string nombreNormalizado,
             CancellationToken cancellationToken = default)
@@ -116,6 +151,11 @@ public sealed class RegistrarProveedorEndpointTests
             Proveedor proveedor,
             CancellationToken cancellationToken = default)
         {
+            if (LanzarDuplicadoAlAgregar)
+            {
+                throw new ProveedorDuplicadoException();
+            }
+
             Proveedores.Add(proveedor);
             return Task.CompletedTask;
         }
