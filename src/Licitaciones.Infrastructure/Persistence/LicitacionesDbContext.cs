@@ -2,6 +2,7 @@ using Licitaciones.Domain.Licitaciones;
 using Licitaciones.Domain.Proveedores;
 using Licitaciones.Domain.Ofertas;
 using Licitaciones.Domain.Aprobaciones;
+using Licitaciones.Domain.TiposCambio;
 using Microsoft.EntityFrameworkCore;
 
 namespace Licitaciones.Infrastructure.Persistence;
@@ -19,6 +20,7 @@ public sealed class LicitacionesDbContext : DbContext
     public DbSet<Proveedor> Proveedores => Set<Proveedor>();
     public DbSet<Oferta> Ofertas => Set<Oferta>();
     public DbSet<NivelAprobacion> NivelesAprobacion => Set<NivelAprobacion>();
+    public DbSet<TipoCambio> TiposCambio => Set<TipoCambio>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

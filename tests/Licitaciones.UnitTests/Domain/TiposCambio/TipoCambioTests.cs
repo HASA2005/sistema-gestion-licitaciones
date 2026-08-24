@@ -1,0 +1,2 @@
+using Licitaciones.Domain.TiposCambio;
+namespace Licitaciones.UnitTests.Domain.TiposCambio; public sealed class TipoCambioTests { [Fact] public void ValorPositivoValido() { Assert.Equal(500m, new TipoCambio(500m, DateTimeOffset.UtcNow).CrcPorUsd); } [Theory][InlineData(0)][InlineData(-1)] public void ValorNoPositivoRechaza(decimal v) => Assert.Throws<ArgumentException>(() => new TipoCambio(v, DateTimeOffset.UtcNow)); }

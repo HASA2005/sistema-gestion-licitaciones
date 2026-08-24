@@ -1,0 +1,2 @@
+@model IReadOnlyList<Licitaciones.Domain.TiposCambio.TipoCambio>
+<h1>Tipos de cambio</h1><a asp-action="Crear">Crear</a><table><tr><th>CRC/USD</th><th>Activo</th></tr>@foreach(var t in Model){<tr><td>@t.CrcPorUsd</td><td>@t.Activo</td></tr>}</table>
