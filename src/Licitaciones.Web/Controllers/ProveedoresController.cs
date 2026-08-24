@@ -34,6 +34,11 @@ public sealed class ProveedoresController(
             TempData["MensajeExito"] = resultado.Mensaje;
             return RedirectToAction(nameof(Registrar));
         }
+        catch (ProveedorDuplicadoException excepcion)
+        {
+            ModelState.AddModelError(nameof(modelo.Nombre), excepcion.Message);
+            return View(modelo);
+        }
         catch (ArgumentException excepcion)
         {
             var mensaje = excepcion.Message.Split(Environment.NewLine)[0];
