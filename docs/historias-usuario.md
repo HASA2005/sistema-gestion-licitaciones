@@ -63,10 +63,66 @@ TT-02 [#3](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/3),
 TT-03 [#6](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/6)
 y TT-04 [#11](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/11).
 
-## Ajuste para historias posteriores
+## HU-02 Crear licitación en estado Borrador
+
+| Campo | Valor |
+| --- | --- |
+| Issue | [#16](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/16) |
+| Iteración | Iteración XP 2 |
+| Prioridad | Alta |
+| Estimación inicial | 8 puntos |
+| Estado | Terminada técnicamente; pendiente de integración en `main` |
+
+**Historia**
+
+Como encargado de compras, quiero crear una licitación en estado Borrador, para
+preparar sus datos antes de publicarla y recibir ofertas.
+
+### Decisiones de alcance
+
+El Planning Game de la historia definió como obligatorios código, título,
+presupuesto y fecha de cierre. Toda creación asigna `Borrador`; el cliente no
+puede elegir el estado. Guardar un borrador no exige una fecha futura: esa regla
+se aplicará en la historia de publicación, tal como establece el ciclo de
+estados del documento oficial.
+
+Se adoptó `numeric(18,2)` para CRC. Por ello se aceptan como máximo dos
+decimales y un monto máximo de `9 999 999 999 999 999,99` CRC.
+El código admite 100 caracteres y el título 200. Ambos se normalizan a Unicode
+Form C y rechazan caracteres de control para mantener un contrato seguro entre
+las interfaces, el dominio y PostgreSQL.
+
+### Criterios de aceptación y evidencia
+
+| Criterio | Resultado | Evidencia principal |
+| --- | --- | --- |
+| El código es obligatorio y se eliminan únicamente sus espacios laterales | Cumplido | `LicitacionTests` |
+| La unicidad del código ignora mayúsculas y minúsculas | Cumplido | Servicio, índice `ux_licitaciones_codigo_normalizado` y prueba de carrera |
+| Los espacios internos del código se conservan y siguen siendo significativos | Cumplido | `Crear_ConCodigoYTituloValidos_LimpiaExtremosSinAlterarContenido` |
+| Código y título respetan límites y rechazan caracteres de control | Cumplido | Pruebas de borde en dominio, API, MVC y columnas `varchar` |
+| El título es obligatorio y se almacena sin espacios laterales | Cumplido | Pruebas de dominio, API y MVC |
+| El presupuesto es decimal, mayor que cero y compatible con `numeric(18,2)` | Cumplido | Dominio, restricción `CHECK`, formulario y PostgreSQL real |
+| La fecha es obligatoria, se almacena en UTC y el formulario usa hora de Costa Rica | Cumplido | Pruebas unitarias, funcionales y de integración Web |
+| Toda licitación nueva inicia en `Borrador` | Cumplido | Entidad, respuesta API y persistencia real |
+| El identificador, la auditoría y `xmin` son administrados por el sistema | Cumplido | Modelo EF y conflicto real con dos contextos |
+| Un duplicado produce un error controlado sin crear otra fila | Cumplido | API `409`, error MVC y prueba concurrente PostgreSQL |
+| La creación está disponible en API y MVC con confirmación | Cumplido | `POST /api/v1/licitaciones` y `/licitaciones/crear` |
+
+Las pruebas principales se encuentran en:
+
+- [dominio](../tests/Licitaciones.UnitTests/Domain/Licitaciones/LicitacionTests.cs);
+- [aplicación](../tests/Licitaciones.UnitTests/Application/Licitaciones/CrearLicitacionServiceTests.cs);
+- [API funcional](../tests/Licitaciones.FunctionalTests/Api/Licitaciones/CrearLicitacionEndpointTests.cs);
+- [Web funcional](../tests/Licitaciones.FunctionalTests/Web/Licitaciones/CrearLicitacionWebTests.cs);
+- [repositorio PostgreSQL](../tests/Licitaciones.IntegrationTests/Persistence/LicitacionRepositoryTests.cs).
+
+Publicar, cerrar, listar, editar, eliminar y gestionar ofertas permanecen fuera
+de HU-02.
+
+## Aprendizaje de estimación
 
 La Iteración XP 1 no dejó una estimación relativa registrada antes del inicio de
 HU-01. No se asignan puntos retrospectivos porque alterarían la evidencia real.
-A partir de la Iteración XP 2, cada historia deberá registrar prioridad,
-estimación y criterios antes del primer commit RED. Esto permitirá calcular
-velocidad en puntos y comparar lo planificado con lo terminado.
+HU-02 corrigió ese hallazgo: la Issue #16 registró prioridad alta, estimación de
+8 puntos y criterios verificables antes de comenzar. Los puntos se contabilizan
+como velocidad únicamente después de integrar y aceptar la historia.
