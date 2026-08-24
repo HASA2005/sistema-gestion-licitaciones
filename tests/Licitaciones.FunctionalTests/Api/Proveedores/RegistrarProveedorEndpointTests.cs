@@ -36,7 +36,49 @@ public sealed class RegistrarProveedorEndpointTests
         Assert.Equal("EMPRESA CENTRAL", proveedorGuardado.NombreNormalizado);
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("Empresa @ Central")]
+    public async Task Post_ConNombreInvalido_DevuelveUnprocessableProblemDetails(
+        string? nombre)
+    {
+        var repositorio = new RepositorioProveedoresEnMemoria();
+
+        await using var aplicacion = new ApiFactory(repositorio);
+        using var cliente = aplicacion.CreateClient();
+
+        var respuesta = await cliente.PostAsJsonAsync(
+            "/api/v1/proveedores",
+            new { nombre });
+
+        Assert.Equal(
+            HttpStatusCode.UnprocessableEntity,
+            respuesta.StatusCode);
+        Assert.Equal(
+            "application/problem+json",
+            respuesta.Content.Headers.ContentType?.MediaType);
+
+        var problema = await respuesta.Content
+            .ReadFromJsonAsync<ProblemaRespuesta>();
+        Assert.NotNull(problema);
+        Assert.Equal("Datos del proveedor inválidos.", problema.Title);
+        Assert.Equal(422, problema.Status);
+        Assert.False(string.IsNullOrWhiteSpace(problema.Detail));
+        Assert.Equal("proveedor_nombre_invalido", problema.ErrorCode);
+        Assert.False(string.IsNullOrWhiteSpace(problema.CorrelationId));
+        Assert.Empty(repositorio.Proveedores);
+    }
+
     private sealed record RegistrarProveedorRespuesta(string Mensaje);
+
+    private sealed record ProblemaRespuesta(
+        string Title,
+        int Status,
+        string Detail,
+        string ErrorCode,
+        string CorrelationId);
 
     private sealed class ApiFactory(
         IProveedorRepository repositorio) : WebApplicationFactory<Program>
