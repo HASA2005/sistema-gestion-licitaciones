@@ -7,6 +7,12 @@ public sealed class Proveedor
 {
     private const string PatronNombrePermitido = @"^[\p{L}\p{N} .,\(\)]+$";
 
+    private Proveedor()
+    {
+        Nombre = string.Empty;
+        NombreNormalizado = string.Empty;
+    }
+
     public Proveedor(string nombre)
         : this(nombre, TimeProvider.System.GetUtcNow())
     {
@@ -41,13 +47,15 @@ public sealed class Proveedor
         UpdatedAt = CreatedAt;
     }
 
-    public Guid Id { get; }
+    public Guid Id { get; private set; }
 
-    public string Nombre { get; }
+    public string Nombre { get; private set; }
 
-    public string NombreNormalizado { get; }
+    public string NombreNormalizado { get; private set; }
 
-    public DateTimeOffset CreatedAt { get; }
+    public DateTimeOffset CreatedAt { get; private set; }
 
-    public DateTimeOffset UpdatedAt { get; }
+    public DateTimeOffset UpdatedAt { get; private set; }
+
+    public uint Version { get; private set; }
 }
