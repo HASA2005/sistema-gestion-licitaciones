@@ -1,6 +1,29 @@
 @Licitaciones.Api_HostAddress = http://localhost:5018
 
-GET {{Licitaciones.Api_HostAddress}}/weatherforecast/
+POST {{Licitaciones.Api_HostAddress}}/api/v1/proveedores
+Content-Type: application/json
+Accept: application/json
+
+{
+  "nombre": "Empresa Central"
+}
+
+###
+
+POST {{Licitaciones.Api_HostAddress}}/api/v1/licitaciones
+Content-Type: application/json
+Accept: application/json
+
+{
+  "codigo": "LIC-2030-001",
+  "titulo": "Compra de equipo informático",
+  "presupuestoEstimadoCrc": 1250000.50,
+  "fechaCierre": "2030-10-15T18:30:00-06:00"
+}
+
+###
+
+GET {{Licitaciones.Api_HostAddress}}/openapi/v1.json
 Accept: application/json
 
 ###
