@@ -13,6 +13,7 @@ public static class RegistrarProveedorEndpoint
             .WithName("RegistrarProveedor")
             .WithTags("Proveedores")
             .Produces<RegistrarProveedorResponse>(StatusCodes.Status201Created)
+            .ProducesProblem(StatusCodes.Status409Conflict)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity);
 
         return endpoints;
@@ -33,6 +34,18 @@ public static class RegistrarProveedorEndpoint
             return TypedResults.Created(
                 uri: (string?)null,
                 value: new RegistrarProveedorResponse(resultado.Mensaje));
+        }
+        catch (ProveedorDuplicadoException excepcion)
+        {
+            return TypedResults.Problem(
+                title: "Proveedor duplicado.",
+                detail: excepcion.Message,
+                statusCode: StatusCodes.Status409Conflict,
+                extensions: new Dictionary<string, object?>
+                {
+                    ["errorCode"] = "proveedor_duplicado",
+                    ["correlationId"] = contextoHttp.TraceIdentifier
+                });
         }
         catch (ArgumentException excepcion)
         {
