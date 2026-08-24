@@ -1,0 +1,3 @@
+@model Licitaciones.Application.Ofertas.MejorOfertaDto
+<h1>Mejor oferta</h1>
+@if (Model.Oferta is null) { <p>Sin ofertas válidas</p> } else { <p>Monto: @Model.Oferta.MontoCrc CRC</p><p>Ahorro: @Model.AhorroPorcentaje?.ToString("0.00") %</p><p>Clasificación: @Model.Clasificacion</p> }

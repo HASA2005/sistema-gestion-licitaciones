@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Licitaciones.Application.Ofertas;
+using Licitaciones.Application.Licitaciones;
+using Licitaciones.Application.Proveedores;
 
 namespace Licitaciones.Api.Errors;
 
@@ -11,10 +14,8 @@ public sealed class ApiExceptionHandler(
         Exception exception,
         CancellationToken cancellationToken)
     {
-        var esSolicitudInvalida = exception is BadHttpRequestException;
-        var estado = esSolicitudInvalida
-            ? StatusCodes.Status400BadRequest
-            : StatusCodes.Status500InternalServerError;
+        var esSolicitudInvalida = exception is BadHttpRequestException or ArgumentException or OfertaReglaException;
+        var estado = exception switch { OfertaNoEncontradaException => 404, OfertaDuplicadaException or ProveedorDuplicadoException or LicitacionDuplicadaException => 409, _ when esSolicitudInvalida => 400, _ => 500 };
 
         if (!esSolicitudInvalida)
         {
