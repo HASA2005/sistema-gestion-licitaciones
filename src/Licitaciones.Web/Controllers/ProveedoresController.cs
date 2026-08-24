@@ -25,11 +25,20 @@ public sealed class ProveedoresController(
             return View(modelo);
         }
 
-        var resultado = await registrarProveedor.EjecutarAsync(
-            modelo.Nombre,
-            cancellationToken);
+        try
+        {
+            var resultado = await registrarProveedor.EjecutarAsync(
+                modelo.Nombre,
+                cancellationToken);
 
-        TempData["MensajeExito"] = resultado.Mensaje;
-        return RedirectToAction(nameof(Registrar));
+            TempData["MensajeExito"] = resultado.Mensaje;
+            return RedirectToAction(nameof(Registrar));
+        }
+        catch (ArgumentException excepcion)
+        {
+            var mensaje = excepcion.Message.Split(Environment.NewLine)[0];
+            ModelState.AddModelError(nameof(modelo.Nombre), mensaje);
+            return View(modelo);
+        }
     }
 }
