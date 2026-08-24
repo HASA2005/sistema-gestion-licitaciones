@@ -42,6 +42,12 @@ public sealed class RegistrarProveedorWebTests
         Assert.Contains("action=\"/proveedores/registrar\"", contenido);
         Assert.Contains("method=\"post\"", contenido);
         Assert.Contains("name=\"Nombre\"", contenido);
+        Assert.Contains("aria-required=\"true\"", contenido);
+        Assert.Contains(
+            "aria-describedby=\"nombre-ayuda nombre-error\"",
+            contenido);
+        Assert.Contains("id=\"nombre-ayuda\"", contenido);
+        Assert.Contains("id=\"nombre-error\"", contenido);
         Assert.Contains("__RequestVerificationToken", contenido);
     }
 
@@ -59,6 +65,8 @@ public sealed class RegistrarProveedorWebTests
         respuesta.EnsureSuccessStatusCode();
         var contenido = await respuesta.Content.ReadAsStringAsync();
         Assert.Contains("<html lang=\"es\">", contenido);
+        Assert.Contains("data-bs-target=\"#navbarSupportedContent\"", contenido);
+        Assert.Contains("id=\"navbarSupportedContent\"", contenido);
         Assert.Contains("href=\"/proveedores/registrar\"", contenido);
         Assert.Contains("Registrar proveedor", contenido);
     }
