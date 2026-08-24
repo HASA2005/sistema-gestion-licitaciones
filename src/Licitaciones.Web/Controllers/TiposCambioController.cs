@@ -1,0 +1,4 @@
+using Licitaciones.Application.TiposCambio;
+using Licitaciones.Web.Models.TiposCambio;
+using Microsoft.AspNetCore.Mvc;
+namespace Licitaciones.Web.Controllers; [Route("tipos-cambio")] public sealed class TiposCambioController(TipoCambioService s) : Controller { [HttpGet("")] public async Task<IActionResult> Index(CancellationToken c) => View(await s.ListarAsync(c)); [HttpGet("crear")] public IActionResult Crear() => View(new TipoCambioViewModel()); [HttpPost("crear")][ValidateAntiForgeryToken] public async Task<IActionResult> Crear(TipoCambioViewModel m, CancellationToken c) { if (!ModelState.IsValid) return View(m); try { await s.CrearAsync(m.CrcPorUsd, m.Activo, c); return RedirectToAction(nameof(Index)); } catch (Exception e) when (e is ArgumentException or InvalidOperationException) { ModelState.AddModelError("", e.Message); return View(m); } } }

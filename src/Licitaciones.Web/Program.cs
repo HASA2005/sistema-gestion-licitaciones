@@ -2,6 +2,7 @@ using Licitaciones.Application.Licitaciones;
 using Licitaciones.Application.Proveedores;
 using Licitaciones.Application.Ofertas;
 using Licitaciones.Application.Aprobaciones;
+using Licitaciones.Application.TiposCambio;
 using Licitaciones.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,7 @@ builder.Services.AddScoped<PublicarLicitacionService>();
 builder.Services.AddScoped<RegistrarProveedorService>();
 builder.Services.AddScoped<OfertaService>();
 builder.Services.AddScoped<NivelAprobacionService>();
+builder.Services.AddScoped<TipoCambioService>();
 builder.Services.AddInfrastructure(
     builder.Configuration.GetConnectionString("Licitaciones")
         ?? throw new InvalidOperationException(

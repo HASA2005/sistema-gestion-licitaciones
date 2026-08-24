@@ -1,0 +1,5 @@
+using Licitaciones.Domain.TiposCambio;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+namespace Licitaciones.Infrastructure.Persistence.Configurations;
+internal sealed class TipoCambioConfiguration : IEntityTypeConfiguration<TipoCambio> { public void Configure(EntityTypeBuilder<TipoCambio> b) { b.ToTable("tipos_cambio", t => t.HasCheckConstraint("ck_tipos_cambio_crc_positivo", "crc_por_usd > 0")); b.HasKey(x => x.Id).HasName("pk_tipos_cambio"); b.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever(); b.Property(x => x.CrcPorUsd).HasColumnName("crc_por_usd").HasPrecision(18, 2).IsRequired(); b.Property(x => x.Activo).HasColumnName("activo").IsRequired(); b.Property(x => x.CreatedAt).HasColumnName("created_at").HasColumnType("timestamp with time zone"); b.Property(x => x.UpdatedAt).HasColumnName("updated_at").HasColumnType("timestamp with time zone"); b.HasIndex(x => x.Activo).HasFilter("activo = true").IsUnique().HasDatabaseName("ux_tipos_cambio_activo"); } }

@@ -1,0 +1,6 @@
+using Licitaciones.Application.TiposCambio;
+using Licitaciones.Domain.TiposCambio;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
+namespace Licitaciones.Infrastructure.Persistence.Repositories;
+public sealed class TipoCambioRepository(LicitacionesDbContext db) : ITipoCambioRepository { public async Task AgregarAsync(TipoCambio t, CancellationToken c = default) { db.TiposCambio.Add(t); try { await db.SaveChangesAsync(c); } catch (DbUpdateException e) when (e.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation }) { throw new InvalidOperationException("Solo puede existir un tipo de cambio activo."); } } public Task<TipoCambio?> ObtenerAsync(Guid id, CancellationToken c = default) => db.TiposCambio.SingleOrDefaultAsync(x => x.Id == id, c); public async Task<IReadOnlyList<TipoCambio>> ListarAsync(CancellationToken c = default) => await db.TiposCambio.AsNoTracking().OrderByDescending(x => x.CreatedAt).ToListAsync(c); public Task<TipoCambio?> ObtenerActivoAsync(CancellationToken c = default) => db.TiposCambio.SingleOrDefaultAsync(x => x.Activo, c); public Task GuardarAsync(CancellationToken c = default) => db.SaveChangesAsync(c); public async Task EliminarAsync(TipoCambio t, CancellationToken c = default) { db.Remove(t); await db.SaveChangesAsync(c); } }
