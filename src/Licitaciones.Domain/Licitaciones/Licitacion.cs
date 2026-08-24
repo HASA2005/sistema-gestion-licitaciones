@@ -245,4 +245,11 @@ public sealed class Licitacion
     /// Obtiene la versión de concurrencia administrada por PostgreSQL.
     /// </summary>
     public uint Version { get; private set; }
+
+    public void Editar(string codigo, string titulo, decimal presupuesto, DateTimeOffset fechaCierre, DateTimeOffset ahora)
+    {
+        if (Estado != EstadoLicitacion.Borrador) throw new InvalidOperationException("Solo se pueden editar licitaciones en Borrador.");
+        var actualizada = new Licitacion(codigo, titulo, presupuesto, fechaCierre, CreatedAt);
+        Codigo = actualizada.Codigo; CodigoNormalizado = actualizada.CodigoNormalizado; Titulo = actualizada.Titulo; PresupuestoEstimadoCrc = actualizada.PresupuestoEstimadoCrc; FechaCierre = actualizada.FechaCierre; UpdatedAt = ahora.ToUniversalTime();
+    }
 }

@@ -13,6 +13,8 @@ namespace Licitaciones.Infrastructure.Persistence.Repositories;
 public sealed class LicitacionRepository(
     LicitacionesDbContext contexto) : ILicitacionRepository
 {
+    public async Task<IReadOnlyList<Licitacion>> ListarAsync(CancellationToken cancellationToken = default) => await contexto.Licitaciones.AsNoTracking().OrderBy(x => x.Codigo).ToListAsync(cancellationToken);
+    public async Task EliminarAsync(Licitacion licitacion, CancellationToken cancellationToken = default) { contexto.Licitaciones.Remove(licitacion); await contexto.SaveChangesAsync(cancellationToken); }
     /// <inheritdoc />
     public Task<bool> ExisteConCodigoNormalizadoAsync(
         string codigoNormalizado,

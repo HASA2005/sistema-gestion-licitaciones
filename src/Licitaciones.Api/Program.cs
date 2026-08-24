@@ -3,6 +3,7 @@ using Licitaciones.Api.Endpoints.Proveedores;
 using Licitaciones.Api.Endpoints.Ofertas;
 using Licitaciones.Api.Endpoints.Aprobaciones;
 using Licitaciones.Api.Endpoints.TiposCambio;
+using Licitaciones.Api.Endpoints.Crud;
 using Licitaciones.Api.Errors;
 using Licitaciones.Application.Licitaciones;
 using Licitaciones.Application.Proveedores;
@@ -70,6 +71,7 @@ app.MapRegistrarProveedor();
 app.MapOfertas();
 app.MapNivelesAprobacion();
 app.MapTiposCambio();
+app.MapCrud();
 
 app.Run();
 

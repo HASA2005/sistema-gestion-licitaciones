@@ -7,6 +7,8 @@ namespace Licitaciones.Application.Licitaciones;
 /// </summary>
 public interface ILicitacionRepository
 {
+    Task<IReadOnlyList<Licitacion>> ListarAsync(CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyList<Licitacion>>(Array.Empty<Licitacion>());
+    Task EliminarAsync(Licitacion licitacion, CancellationToken cancellationToken = default) => Task.CompletedTask;
     /// <summary>
     /// Determina si existe una licitación con el código normalizado indicado.
     /// </summary>

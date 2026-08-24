@@ -58,4 +58,10 @@ public sealed class Proveedor
     public DateTimeOffset UpdatedAt { get; private set; }
 
     public uint Version { get; private set; }
+
+    public void Editar(string nombre, DateTimeOffset ahora)
+    {
+        var actualizado = new Proveedor(nombre, CreatedAt);
+        Nombre = actualizado.Nombre; NombreNormalizado = actualizado.NombreNormalizado; UpdatedAt = ahora.ToUniversalTime();
+    }
 }
