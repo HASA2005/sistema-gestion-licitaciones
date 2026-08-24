@@ -1,0 +1,2 @@
+@model Licitaciones.Web.Models.Aprobaciones.NivelAprobacionViewModel
+<h1>Crear nivel</h1><form asp-action="Crear" method="post"><div asp-validation-summary="All"></div><label asp-for="Responsable"></label><input asp-for="Responsable"/><label asp-for="MontoMinimoCrc"></label><input asp-for="MontoMinimoCrc" type="number" step=".01"/><label asp-for="MontoMaximoCrc"></label><input asp-for="MontoMaximoCrc" type="number" step=".01"/><button type="submit">Guardar</button></form>

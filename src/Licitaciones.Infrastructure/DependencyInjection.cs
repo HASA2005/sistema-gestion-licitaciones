@@ -1,6 +1,7 @@
 using Licitaciones.Application.Licitaciones;
 using Licitaciones.Application.Proveedores;
 using Licitaciones.Application.Ofertas;
+using Licitaciones.Application.Aprobaciones;
 using Licitaciones.Infrastructure.Persistence;
 using Licitaciones.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,7 @@ public static class DependencyInjection
         services.AddScoped<ILicitacionRepository, LicitacionRepository>();
         services.AddScoped<IProveedorRepository, ProveedorRepository>();
         services.AddScoped<IOfertaRepository, OfertaRepository>();
+        services.AddScoped<INivelAprobacionRepository, NivelAprobacionRepository>();
 
         return services;
     }
