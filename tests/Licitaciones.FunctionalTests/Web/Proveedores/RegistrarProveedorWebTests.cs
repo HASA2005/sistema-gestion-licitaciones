@@ -44,6 +44,24 @@ public sealed class RegistrarProveedorWebTests
     }
 
     [Fact]
+    public async Task Get_Inicio_OfreceAccesoAlRegistroDeProveedores()
+    {
+        await using var aplicacion = new WebFactory();
+        using var cliente = aplicacion.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            BaseAddress = new Uri("https://localhost")
+        });
+
+        var respuesta = await cliente.GetAsync("/");
+
+        respuesta.EnsureSuccessStatusCode();
+        var contenido = await respuesta.Content.ReadAsStringAsync();
+        Assert.Contains("<html lang=\"es\">", contenido);
+        Assert.Contains("href=\"/proveedores/registrar\"", contenido);
+        Assert.Contains("Registrar proveedor", contenido);
+    }
+
+    [Fact]
     public async Task Post_ConNombreValido_GuardaYRedirigeConConfirmacion()
     {
         var repositorio = new RepositorioProveedoresEnMemoria();
