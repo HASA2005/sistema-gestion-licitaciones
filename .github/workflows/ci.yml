@@ -15,7 +15,7 @@ jobs:
   build-and-test:
     name: Compilar y ejecutar pruebas
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
       - name: Descargar el repositorio
@@ -38,7 +38,16 @@ jobs:
       - name: Verificar Docker para Testcontainers
         run: docker version
 
+      - name: Instalar Chromium para Playwright
+        timeout-minutes: 10
+        run: >-
+          pwsh
+          ./tests/Licitaciones.EndToEndTests/bin/Release/net9.0/playwright.ps1
+          install --with-deps chromium
+
       - name: Ejecutar todas las pruebas
+        env:
+          E2E_ARTIFACTS_PATH: ${{ github.workspace }}/TestResults/e2e
         run: >-
           dotnet test ./Licitaciones.sln
           --configuration Release
@@ -52,6 +61,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: resultados-pruebas
-          path: TestResults/**/*.trx
+          path: |
+            TestResults/**/*.trx
+            TestResults/e2e/**
           if-no-files-found: warn
           retention-days: 7
