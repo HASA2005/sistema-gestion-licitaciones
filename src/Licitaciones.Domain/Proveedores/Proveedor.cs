@@ -8,6 +8,11 @@ public sealed class Proveedor
     private const string PatronNombrePermitido = @"^[\p{L}\p{N} .,\(\)]+$";
 
     public Proveedor(string nombre)
+        : this(nombre, TimeProvider.System.GetUtcNow())
+    {
+    }
+
+    public Proveedor(string nombre, DateTimeOffset fechaCreacion)
     {
         if (string.IsNullOrWhiteSpace(nombre))
         {
@@ -31,9 +36,18 @@ public sealed class Proveedor
                 .Trim()
                 .Split(' ', StringSplitOptions.RemoveEmptyEntries));
         NombreNormalizado = Nombre.ToUpperInvariant();
+        Id = Guid.NewGuid();
+        CreatedAt = fechaCreacion.ToUniversalTime();
+        UpdatedAt = CreatedAt;
     }
+
+    public Guid Id { get; }
 
     public string Nombre { get; }
 
     public string NombreNormalizado { get; }
+
+    public DateTimeOffset CreatedAt { get; }
+
+    public DateTimeOffset UpdatedAt { get; }
 }
