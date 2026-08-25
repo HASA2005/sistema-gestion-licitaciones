@@ -124,10 +124,23 @@ las operaciones de actualización/eliminación `204` cuando corresponda.
 
 ## Problem Details
 
-Los endpoints de creación de proveedores, creación de licitaciones y
-publicación definen respuestas Problem Details específicas. El manejador global
-agrega `title`, `status`, `detail`, `errorCode` y `correlationId` para errores
-procesados globalmente, sin exponer detalles técnicos de la excepción.
+La API utiliza un manejador global para transformar errores esperados en
+respuestas Problem Details sin exponer detalles técnicos de las excepciones.
+
+El contrato de errores distingue:
+
+- `400 Bad Request`: entrada inválida o regla de negocio conocida que no puede
+  cumplirse.
+- `404 Not Found`: recurso solicitado inexistente.
+- `409 Conflict`: duplicados, concurrencia o conflictos de negocio conocidos.
+- `500 Internal Server Error`: errores inesperados o excepciones no reconocidas.
+
+Las respuestas procesadas globalmente incluyen `title`, `status`, `detail`,
+`errorCode` y `correlationId`.
+
+Una `InvalidOperationException` genérica no se convierte automáticamente en un
+error de negocio; permanece como HTTP 500 para no ocultar posibles errores de
+programación o infraestructura.
 
 ## Colección reproducible
 

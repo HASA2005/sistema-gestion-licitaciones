@@ -1,9 +1,9 @@
-# Sistema de Gestión de Licitaciones
+﻿# Sistema de GestiÃ³n de Licitaciones
 
-## Descripción
+## DescripciÃ³n
 
-Aplicación académica para centralizar la gestión de proveedores, licitaciones,
-ofertas, niveles de aprobación y tipos de cambio. La solución ofrece una
+AplicaciÃ³n acadÃ©mica para centralizar la gestiÃ³n de proveedores, licitaciones,
+ofertas, niveles de aprobaciÃ³n y tipos de cambio. La soluciÃ³n ofrece una
 interfaz Web MVC y una API REST, con persistencia PostgreSQL mediante Entity
 Framework Core.
 
@@ -13,21 +13,21 @@ El sistema implementa:
 
 - CRUD de proveedores;
 - CRUD de licitaciones;
-- creación en estado `Borrador` y publicación de licitaciones;
-- CRUD de ofertas y restricción de una oferta por proveedor y licitación;
-- consulta de mejor oferta y cálculo de ahorro;
-- niveles de aprobación, validación de traslapes y determinación por monto;
-- tipos de cambio CRC/USD, un único tipo activo y conversión CRC → USD;
+- creaciÃ³n en estado `Borrador` y publicaciÃ³n de licitaciones;
+- CRUD de ofertas y restricciÃ³n de una oferta por proveedor y licitaciÃ³n;
+- consulta de mejor oferta y cÃ¡lculo de ahorro;
+- niveles de aprobaciÃ³n, validaciÃ³n de traslapes y determinaciÃ³n por monto;
+- tipos de cambio CRC/USD, un Ãºnico tipo activo y conversiÃ³n CRC â†’ USD;
 - Web MVC y API;
 - PostgreSQL y EF Core;
 - Docker Compose y manifiestos Kubernetes;
-- integración continua con GitHub Actions;
+- integraciÃ³n continua con GitHub Actions;
 - pruebas UnitTests, FunctionalTests, IntegrationTests y EndToEndTests.
 
 Las fechas se almacenan internamente en UTC y se presentan en
 `America/Costa_Rica`.
 
-## Tecnologías
+## TecnologÃ­as
 
 - .NET 9.
 - ASP.NET Core MVC.
@@ -43,7 +43,7 @@ Las fechas se almacenan internamente en UTC y se presentan en
 
 ## Arquitectura
 
-La solución separa el dominio, los casos de uso, la persistencia y las
+La soluciÃ³n separa el dominio, los casos de uso, la persistencia y las
 interfaces de entrada:
 
 - `Licitaciones.Domain`: entidades e invariantes.
@@ -56,20 +56,20 @@ interfaces de entrada:
 Consulte [Arquitectura general](docs/arquitectura-general.md) y [Modelo de
 datos](docs/modelo-datos.md).
 
-## Módulos
+## MÃ³dulos
 
-- **Proveedores:** catálogo y operaciones CRUD.
-- **Licitaciones:** creación en Borrador, publicación y operaciones CRUD.
-- **Ofertas:** propuestas, unicidad por proveedor/licitación, mejor oferta y
+- **Proveedores:** catÃ¡logo y operaciones CRUD.
+- **Licitaciones:** creaciÃ³n en Borrador, publicaciÃ³n y operaciones CRUD.
+- **Ofertas:** propuestas, unicidad por proveedor/licitaciÃ³n, mejor oferta y
   ahorro.
-- **Niveles de aprobación:** rangos, traslapes y determinación por monto.
-- **Tipos de cambio:** administración de valores CRC/USD y conversión.
+- **Niveles de aprobaciÃ³n:** rangos, traslapes y determinaciÃ³n por monto.
+- **Tipos de cambio:** administraciÃ³n de valores CRC/USD y conversiÃ³n.
 
-## Ejecución local
+## EjecuciÃ³n local
 
 ### Con Docker Compose
 
-Desde la raíz del repositorio:
+Desde la raÃ­z del repositorio:
 
 ```powershell
 docker compose up -d --build
@@ -95,14 +95,14 @@ Para detener los servicios:
 docker compose down
 ```
 
-`docker compose down -v` también elimina el volumen persistente y los datos de
+`docker compose down -v` tambiÃ©n elimina el volumen persistente y los datos de
 PostgreSQL.
 
-### Ejecución directa con .NET
+### EjecuciÃ³n directa con .NET
 
 Se requiere una cadena PostgreSQL en `ConnectionStrings:Licitaciones`. La
-configuración segura y las migraciones se explican en [Desarrollo
-local](docs/desarrollo-local.md). Después puede iniciarse Web o API con
+configuraciÃ³n segura y las migraciones se explican en [Desarrollo
+local](docs/desarrollo-local.md). DespuÃ©s puede iniciarse Web o API con
 `dotnet run --project` sobre el proyecto correspondiente.
 
 ## Pruebas
@@ -111,16 +111,16 @@ local](docs/desarrollo-local.md). Después puede iniciarse Web o API con
 dotnet test Licitaciones.sln
 ```
 
-La última ejecución manual confirmada registró **180 pruebas correctas y 0
+La Ãºltima ejecuciÃ³n manual confirmada registrÃ³ **180 pruebas correctas y 0
 fallidas**.
 
-## Documentación
+## DocumentaciÃ³n
 
-- [Índice de documentación](docs/README.md)
-- [Visión y alcance](docs/vision-alcance.md)
+- [Ãndice de documentaciÃ³n](docs/README.md)
+- [VisiÃ³n y alcance](docs/vision-alcance.md)
 - [Historias de usuario](docs/historias-usuario.md)
 - [Plan XP](docs/plan-xp.md)
-- [Bitácora XP](docs/bitacora-xp.md)
+- [BitÃ¡cora XP](docs/bitacora-xp.md)
 - [Arquitectura general](docs/arquitectura-general.md)
 - [Modelo de datos](docs/modelo-datos.md)
 - [API](docs/api.md)
@@ -128,8 +128,9 @@ fallidas**.
 - [Docker](docs/docker.md)
 - [Kubernetes](docs/kubernetes.md)
 - [Uso de IA](docs/uso-ia.md)
-- [Integración de módulos](docs/integracion-modulos.md)
+- [IntegraciÃ³n de mÃ³dulos](docs/integracion-modulos.md)
 - [Desarrollo local](docs/desarrollo-local.md)
-- [Módulo de licitaciones](docs/modulos/licitaciones.md)
-- [Módulo de proveedores](docs/modulos/proveedores.md)
-- [Colección API HTTP](docs/api.http)
+- [MÃ³dulo de licitaciones](docs/modulos/licitaciones.md)
+- [MÃ³dulo de proveedores](docs/modulos/proveedores.md)
+- [ColecciÃ³n API HTTP](docs/api.http)
+

@@ -1,8 +1,8 @@
-# Documentación del Sistema de Gestión de Licitaciones
+﻿# DocumentaciÃ³n del Sistema de GestiÃ³n de Licitaciones
 
-Este directorio contiene la documentación académica y técnica final del
-Sistema de Gestión de Licitaciones. Incluye su alcance, arquitectura, modelo
-de datos, API, pruebas, infraestructura, integración de módulos y uso de
+Este directorio contiene la documentaciÃ³n acadÃ©mica y tÃ©cnica final del
+Sistema de GestiÃ³n de Licitaciones. Incluye su alcance, arquitectura, modelo
+de datos, API, pruebas, infraestructura, integraciÃ³n de mÃ³dulos y uso de
 inteligencia artificial.
 
 ## Estado actual
@@ -12,59 +12,60 @@ El sistema implementa:
 - Proveedores.
 - Licitaciones.
 - Ofertas.
-- Niveles de aprobación.
+- Niveles de aprobaciÃ³n.
 - Tipos de cambio.
 - Web MVC.
 - API.
 - PostgreSQL.
 - Docker.
 - Kubernetes.
-- Integración continua con GitHub Actions.
+- IntegraciÃ³n continua con GitHub Actions.
 - UnitTests.
 - FunctionalTests.
 - IntegrationTests.
 - EndToEndTests.
 
-La última ejecución manual confirmada registró **180 pruebas correctas y 0
+La Ãºltima ejecuciÃ³n manual confirmada registrÃ³ **180 pruebas correctas y 0
 fallidas**.
 
-La etiqueta `v0.1.0` se conserva como referencia histórica del cierre de una
-liberación anterior.
+La etiqueta `v0.1.0` se conserva como referencia histÃ³rica del cierre de una
+liberaciÃ³n anterior.
 
-## Índice documental
+## Ãndice documental
 
-- [Visión y alcance](vision-alcance.md): problema, objetivos, usuarios,
+- [VisiÃ³n y alcance](vision-alcance.md): problema, objetivos, usuarios,
   alcance incluido y exclusiones.
 - [Historias de usuario](historias-usuario.md): historias, criterios y estados.
-- [Plan XP](plan-xp.md): cuatro iteraciones XP, prácticas y criterios de salida.
-- [Bitácora XP](bitacora-xp.md): evolución incremental y evidencia del proceso.
+- [Plan XP](plan-xp.md): cuatro iteraciones XP, prÃ¡cticas y criterios de salida.
+- [BitÃ¡cora XP](bitacora-xp.md): evoluciÃ³n incremental y evidencia del proceso.
 - [Arquitectura general](arquitectura-general.md): capas, dependencias y
   proyectos de pruebas.
 - [Modelo de datos](modelo-datos.md): entidades, relaciones, restricciones y
   migraciones.
-- [Integración de módulos](integracion-modulos.md): colaboración persistida y
+- [IntegraciÃ³n de mÃ³dulos](integracion-modulos.md): colaboraciÃ³n persistida y
   servicios independientes.
 - [API REST](api.md): endpoints, contratos y manejo de errores.
 - [Pruebas automatizadas](pruebas.md): estrategia, proyectos, CI y E2E.
 - [Docker](docker.md): servicios Compose, puertos, volumen y health checks.
-- [Kubernetes](kubernetes.md): recursos, configuración, persistencia y probes.
-- [Desarrollo local](desarrollo-local.md): configuración y ejecución local.
+- [Kubernetes](kubernetes.md): recursos, configuraciÃ³n, persistencia y probes.
+- [Desarrollo local](desarrollo-local.md): configuraciÃ³n y ejecuciÃ³n local.
 - [Uso de inteligencia artificial](uso-ia.md): herramientas, asistencia,
-  revisión humana y responsabilidad del equipo.
+  revisiÃ³n humana y responsabilidad del equipo.
 
-### Documentación por módulo
+### DocumentaciÃ³n por mÃ³dulo
 
-- [Módulo de licitaciones](modulos/licitaciones.md).
-- [Módulo de proveedores](modulos/proveedores.md).
-- [Módulo de ofertas](modulos/ofertas.md).
-- [Módulo de niveles de aprobación](modulos/aprobaciones.md).
-- [Módulo de tipos de cambio](modulos/tipos-cambio.md).
+- [MÃ³dulo de licitaciones](modulos/licitaciones.md).
+- [MÃ³dulo de proveedores](modulos/proveedores.md).
+- [MÃ³dulo de ofertas](modulos/ofertas.md).
+- [MÃ³dulo de niveles de aprobaciÃ³n](modulos/aprobaciones.md).
+- [MÃ³dulo de tipos de cambio](modulos/tipos-cambio.md).
 
 ## Convenciones
 
-- La metodología utilizada es Extreme Programming.
+- La metodologÃ­a utilizada es Extreme Programming.
 - Las historias y tareas se relacionan con GitHub cuando existe una referencia
   verificable.
 - Los cambios se integran mediante Pull Requests.
 - Se utilizan Conventional Commits cuando corresponde.
 - No se almacenan secretos ni credenciales reales en el repositorio.
+
