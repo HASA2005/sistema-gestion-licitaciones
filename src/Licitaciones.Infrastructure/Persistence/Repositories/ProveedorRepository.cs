@@ -42,6 +42,28 @@ public sealed class ProveedorRepository(
         }
     }
 
+    public async Task GuardarCambiosAsync(
+        Proveedor proveedor,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await contexto.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException excepcion)
+            when (EsNombreNormalizadoDuplicado(excepcion))
+        {
+            contexto.Entry(proveedor).State = EntityState.Detached;
+            throw new ProveedorDuplicadoException();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            contexto.Entry(proveedor).State = EntityState.Detached;
+            throw new InvalidOperationException(
+                "El proveedor fue modificado por otra operación. Recargue la página e inténtelo nuevamente.");
+        }
+    }
+
     private static bool EsNombreNormalizadoDuplicado(
         DbUpdateException excepcion)
     {

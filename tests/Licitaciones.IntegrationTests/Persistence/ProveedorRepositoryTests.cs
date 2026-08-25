@@ -89,4 +89,70 @@ public sealed class ProveedorRepositoryTests
         await using var contextoVerificacion = new LicitacionesDbContext(opciones);
         Assert.Equal(1, await contextoVerificacion.Proveedores.CountAsync());
     }
+
+    [Fact]
+    public async Task EditarAsync_ActualizaLaFilaExistenteSinCambiarIdentidadNiCreacion()
+    {
+        await using var postgres = new PostgreSqlBuilder("postgres:16-alpine")
+            .WithDatabase("licitaciones")
+            .WithUsername("postgres")
+            .WithPassword("postgres")
+            .Build();
+
+        await postgres.StartAsync();
+        var opciones = new DbContextOptionsBuilder<LicitacionesDbContext>()
+            .UseNpgsql(postgres.GetConnectionString())
+            .Options;
+
+        Guid id;
+        DateTimeOffset creado;
+        await using (var contexto = new LicitacionesDbContext(opciones))
+        {
+            await contexto.Database.EnsureCreatedAsync();
+            var repositorio = new ProveedorRepository(contexto);
+            var proveedor = new Proveedor("Empresa Original", DateTimeOffset.UtcNow.AddDays(-1));
+            id = proveedor.Id;
+            creado = proveedor.CreatedAt;
+            await repositorio.AgregarAsync(proveedor);
+
+            proveedor.Editar("Empresa Actualizada", DateTimeOffset.UtcNow);
+            await repositorio.GuardarCambiosAsync(proveedor);
+        }
+
+        await using var verificacion = new LicitacionesDbContext(opciones);
+        var guardados = await verificacion.Proveedores.AsNoTracking().ToListAsync();
+        var actualizado = Assert.Single(guardados);
+        Assert.Equal(id, actualizado.Id);
+        Assert.True((creado - actualizado.CreatedAt).Duration() < TimeSpan.FromMilliseconds(1));
+        Assert.Equal("Empresa Actualizada", actualizado.Nombre);
+        Assert.True(actualizado.UpdatedAt > actualizado.CreatedAt);
+    }
+
+    [Fact]
+    public async Task EditarAsync_ConNombreDeOtroProveedor_LanzaErrorControlado()
+    {
+        await using var postgres = new PostgreSqlBuilder("postgres:16-alpine")
+            .WithDatabase("licitaciones")
+            .WithUsername("postgres")
+            .WithPassword("postgres")
+            .Build();
+
+        await postgres.StartAsync();
+        var opciones = new DbContextOptionsBuilder<LicitacionesDbContext>()
+            .UseNpgsql(postgres.GetConnectionString())
+            .Options;
+
+        await using var contexto = new LicitacionesDbContext(opciones);
+        await contexto.Database.EnsureCreatedAsync();
+        var repositorio = new ProveedorRepository(contexto);
+        await repositorio.AgregarAsync(new Proveedor("Proveedor Existente"));
+        var proveedor = new Proveedor("Proveedor Editable");
+        await repositorio.AgregarAsync(proveedor);
+
+        proveedor.Editar(" proveedor   existente ", DateTimeOffset.UtcNow);
+        var excepcion = await Assert.ThrowsAsync<ProveedorDuplicadoException>(
+            () => repositorio.GuardarCambiosAsync(proveedor));
+
+        Assert.Equal("Ya existe un proveedor con el mismo nombre.", excepcion.Message);
+    }
 }

@@ -14,4 +14,8 @@ public interface IProveedorRepository
     Task AgregarAsync(
         Proveedor proveedor,
         CancellationToken cancellationToken = default);
+
+    Task GuardarCambiosAsync(
+        Proveedor proveedor,
+        CancellationToken cancellationToken = default) => Task.CompletedTask;
 }

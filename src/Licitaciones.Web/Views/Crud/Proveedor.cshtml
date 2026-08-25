@@ -1,3 +1,61 @@
 @model Licitaciones.Domain.Proveedores.Proveedor
-<h1>@Model.Nombre</h1><p>Id: @Model.Id</p>
-<a asp-action="EditarProveedor" asp-route-id="@Model.Id">Editar</a><form asp-action="EliminarProveedor" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('¿Eliminar proveedor?');"><button type="submit">Eliminar</button></form>
+@{
+    ViewData["Title"] = "Detalle del proveedor";
+}
+
+<div class="page-shell">
+    <a class="back-link" asp-action="Proveedores">← Volver a proveedores</a>
+
+    <header class="page-header">
+        <div>
+            <h1>@Model.Nombre</h1>
+            <p class="page-subtitle">Información general y auditoría del proveedor.</p>
+        </div>
+
+        <div class="action-group">
+            <a class="btn btn-secondary"
+               asp-action="EditarProveedor"
+               asp-route-id="@Model.Id">
+                Editar
+            </a>
+
+            <form asp-action="EliminarProveedor"
+                  asp-route-id="@Model.Id"
+                  method="post"
+                  onsubmit="return confirm('¿Eliminar este proveedor?');">
+                <button class="btn btn-danger" type="submit">
+                    Eliminar
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <section class="content-card">
+        <div class="detail-grid">
+
+            <div class="detail-item">
+                <span class="data-label">Nombre</span>
+                <span class="data-value">@Model.Nombre</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="data-label">Fecha de registro</span>
+                <span class="data-value">
+                    @Model.CreatedAt.ToCostaRicaTime().ToString("dd/MM/yyyy HH:mm")
+                </span>
+            </div>
+
+            <div class="detail-item">
+                <span class="data-label">Última actualización</span>
+                <span class="data-value">
+                    @Model.UpdatedAt.ToCostaRicaTime().ToString("dd/MM/yyyy HH:mm")
+                </span>
+            </div>
+
+        </div>
+
+        <div class="technical-info">
+            <strong>ID técnico:</strong> @Model.Id
+        </div>
+    </section>
+</div>
