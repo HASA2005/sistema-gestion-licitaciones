@@ -68,5 +68,10 @@ public sealed class OfertasController(OfertaService service) : Controller
     {
         try { await service.EliminarAsync(id, ct); return RedirectToAction(nameof(Index)); }
         catch (OfertaNoEncontradaException) { return NotFound(); }
+        catch (OfertaReglaException e)
+        {
+            TempData["MensajeError"] = e.Message;
+            return RedirectToAction(nameof(Detalle), new { id });
+        }
     }
 }

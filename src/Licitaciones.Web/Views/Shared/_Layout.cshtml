@@ -1,1 +1,43 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>@ViewData["Title"] · Licitaciones</title><link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/><link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/></head><body><header class="app-header"><nav class="navbar navbar-expand-lg"><div class="container"><a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index"><span class="brand-mark">L</span> Licitaciones</a><button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"><span class="navbar-toggler-icon"></span></button><div id="navbarSupportedContent" class="collapse navbar-collapse"><ul class="navbar-nav ms-auto gap-lg-2"><li><a class="nav-link" asp-controller="Home" asp-action="Index">Inicio</a></li><li><a class="nav-link" asp-controller="Crud" asp-action="Licitaciones">Licitaciones</a></li><li><a class="nav-link" asp-controller="Crud" asp-action="Proveedores">Proveedores</a></li><li><a class="nav-link" asp-controller="Ofertas" asp-action="Index">Ofertas</a></li><li><a class="nav-link" asp-controller="NivelesAprobacion" asp-action="Index">Aprobación</a></li><li><a class="nav-link" asp-controller="TiposCambio" asp-action="Index">Tipos de cambio</a></li></ul></div></div></nav></header><main class="container py-4">@RenderBody()</main><footer class="app-footer"><div class="container">Sistema de Gestión de Licitaciones <span>· 2026</span></div></footer><script src="~/lib/jquery/dist/jquery.min.js"></script><script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script><script src="~/js/site.js"></script>@await RenderSectionAsync("Scripts",false)</body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] · Licitaciones</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="app-header">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index"><span class="brand-mark">L</span> Licitaciones</a>
+                <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"><span class="navbar-toggler-icon"></span></button>
+                <div id="navbarSupportedContent" class="collapse navbar-collapse">
+                    <ul class="navbar-nav ms-auto gap-lg-2">
+                        <li><a class="nav-link" asp-controller="Home" asp-action="Index">Inicio</a></li>
+                        <li><a class="nav-link" asp-controller="Crud" asp-action="Licitaciones">Licitaciones</a></li>
+                        <li><a class="nav-link" asp-controller="Crud" asp-action="Proveedores">Proveedores</a></li>
+                        <li><a class="nav-link" asp-controller="Ofertas" asp-action="Index">Ofertas</a></li>
+                        <li><a class="nav-link" asp-controller="NivelesAprobacion" asp-action="Index">Aprobación</a></li>
+                        <li><a class="nav-link" asp-controller="TiposCambio" asp-action="Index">Tipos de cambio</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main class="container py-4">
+        @{ var mensajeError = TempData["MensajeError"] as string ?? TempData["Error"] as string; }
+        @if (mensajeError is not null)
+        {
+            <div class="alert alert-danger" role="alert">@mensajeError</div>
+        }
+        @RenderBody()
+    </main>
+    <footer class="app-footer"><div class="container">Sistema de Gestión de Licitaciones <span>· 2026</span></div></footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
+    @await RenderSectionAsync("Scripts", false)
+</body>
+</html>
