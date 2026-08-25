@@ -2,90 +2,67 @@
 
 ## Propósito
 
-El proyecto se desarrolla exclusivamente mediante Extreme Programming (XP).
-El plan organiza cuatro iteraciones cortas, pequeñas liberaciones ejecutables,
-TDD, integración continua, diseño simple, refactorización y retroalimentación.
-El alcance de cada iteración se confirma mediante Planning Game antes de
-programar y puede ajustarse usando evidencia de la iteración anterior.
+El proyecto se desarrolló exclusivamente mediante Extreme Programming (XP). El plan usa iteraciones XP, historias de usuario, TDD, RED-GREEN-REFACTOR, simple design, refactoring, integración continua, small releases y feedback.
 
-## Reglas de trabajo
+## Prácticas XP aplicadas
 
-1. Crear o seleccionar una historia con prioridad, estimación y criterios de
-   aceptación verificables.
-2. Dividirla en el incremento vertical más pequeño que aporte valor.
-3. Escribir una prueba que falle por la razón esperada (RED).
-4. Implementar el mínimo necesario para aprobarla (GREEN).
-5. Refactorizar sin cambiar el comportamiento observable.
-6. Integrar mediante commits pequeños y Pull Request.
-7. Mantener compilación, pruebas y GitHub Actions satisfactorios.
-8. Actualizar trazabilidad, bitácora y documentación del módulo.
-9. Obtener retroalimentación y ajustar la siguiente iteración.
+- Historias de usuario con criterios verificables.
+- TDD cuando existe evidencia de pruebas seguidas por implementación en Git.
+- RED-GREEN-REFACTOR para los incrementos con trazabilidad disponible.
+- Diseño simple y separación Domain, Application, Infrastructure, API y Web.
+- Integración continua con GitHub Actions.
+- Small releases y Pull Requests pequeños.
+- Pruebas automatizadas, pruebas de integración y pruebas E2E.
+- Feedback mediante revisión manual de formularios, API y flujos Web.
 
-## Plan de liberación
+## Iteración XP 1 — Proveedores y base técnica
 
-El siguiente plan expresa objetivos y candidatos. Las historias definitivas de
-cada iteración se acuerdan al comenzar esa iteración.
+**Objetivo:** entregar el primer recorrido vertical para registrar proveedores por API y Web, con persistencia real.
 
-| Iteración | Objetivo de valor | Candidatos principales | Liberación |
-| --- | --- | --- | --- |
-| XP 1 | Registrar un proveedor por API y MVC con persistencia real | Estructura modular, HU-01, PostgreSQL, CI básica | `v0.1.0` |
-| XP 2 | Preparar y publicar licitaciones antes de recibir ofertas | Crear licitación en Borrador, unicidad de código, presupuesto y fecha; publicación como transición separada; primera prueba de navegador | `v0.2.0` |
-| XP 3 | Registrar y evaluar ofertas válidas | Ofertas, restricciones por estado y vencimiento, mejor oferta, clasificación y niveles de aprobación | `v0.3.0` |
-| XP 4 | Completar operación, despliegue y entrega | Tipo de cambio y CRC/USD, operaciones restantes, UX, Docker Compose, Kubernetes, pruebas E2E y documentación final | `v1.0.0` |
+**Historias:** HU-01.
 
-Las tareas de calidad, documentación, CI y contenedores se adelantarán cuando
-reduzcan riesgo; no se reservarán íntegramente para la última iteración.
+**Tareas técnicas verificables:** inicialización de la solución (#2), dependencias para pruebas (#3), persistencia (#6), integración continua (#11) y documentación de cierre (#14).
 
-## Plan de la Iteración XP 1
+**Prácticas y evidencia:** TDD sobre normalización, validación, duplicados, persistencia, API y MVC; PostgreSQL con Testcontainers; workflow CI; small release `v0.1.0`.
 
-**Periodo observado:** 23 y 24 de agosto de 2026.
+**Criterio de salida:** recorrido de proveedores implementado, compilación y pruebas automatizadas satisfactorias, documentación de la iteración y CI configurada. La documentación histórica registra 46 casos para ese corte.
 
-**Objetivo:** entregar un recorrido demostrable que registre un proveedor desde
-MVC o API, aplique las mismas reglas de negocio y persista en PostgreSQL.
+## Iteración XP 2 — Licitaciones, publicación y navegador
 
-| Trabajo | Referencia | Prioridad | Estado al cierre |
-| --- | --- | --- | --- |
-| TT-01 Inicializar estructura .NET | [#2](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/2) | Alta | Terminado |
-| TT-02 Configurar dependencias para TDD | [#3](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/3) | Alta | Terminado |
-| HU-01 Registrar proveedor | [#1](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/1) | Alta | Terminado |
-| TT-03 Configurar persistencia de proveedores | [#6](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/6) | Alta | Terminado |
-| TT-04 Configurar integración continua básica | [#11](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/11) | Alta | Terminado |
-| TT-05 Documentar cierre y pequeña liberación | [#14](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/14) | Alta | Terminado |
+**Objetivo:** preparar licitaciones en Borrador, publicarlas y verificar el flujo Web completo.
 
-### Criterios de salida
+**Historias:** HU-02 y HU-03.
 
-- [x] HU-01 cumple sus criterios en Domain, Application, Infrastructure, API y
-  Web.
-- [x] PostgreSQL 16 se verifica mediante Testcontainers.
-- [x] La solución compila en Release sin errores ni advertencias.
-- [x] Las 46 pruebas se ejecutan satisfactoriamente.
-- [x] GitHub Actions pasa tanto en Pull Request como en `main`.
-- [x] La documentación de cierre se integra en `main` mediante el PR #15.
-- [x] Se crea localmente la etiqueta `v0.1.0` desde el commit de cierre.
-- [x] Se publica la etiqueta `v0.1.0` en GitHub.
+**Tareas técnicas verificables:** creación de licitaciones (#16), publicación de licitaciones (#18) y prueba E2E del flujo Web (#20).
 
-## Plan de la Iteración XP 2
+**Prácticas y evidencia:** TDD de invariantes, fechas UTC y concurrencia; PostgreSQL, API, MVC, antiforgery, PRG, OpenAPI y Playwright con Testcontainers.
 
-**Inicio observado:** 24 de agosto de 2026.
+**Criterio de salida:** creación en Borrador, publicación válida, fecha futura, control de concurrencia, pruebas funcionales e integración, y flujo E2E de navegador.
 
-**Objetivo:** permitir preparar y publicar licitaciones antes de recibir ofertas
-y fortalecer la calidad automatizada del recorrido Web.
+## Iteración XP 3 — Ofertas, aprobación y valores monetarios
 
-| Trabajo | Referencia | Prioridad | Estimación | Estado |
-| --- | --- | --- | ---: | --- |
-| HU-02 Crear licitación en Borrador | [#16](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/16) | Alta | 8 puntos | Terminada e integrada mediante el PR #17 |
-| HU-03 Publicar licitación para recibir ofertas | [#18](https://github.com/HASA2005/sistema-gestion-licitaciones/issues/18) | Alta | 5 puntos | Terminada técnicamente; pendiente de integración |
-| Primera prueba real de navegador | Tarea técnica por crear | Alta | Por estimar | Pendiente |
-| Reporte y puertas de cobertura | Tarea técnica por crear | Alta | Por estimar | Pendiente |
+**Objetivo:** completar la evaluación de propuestas y las reglas monetarias auxiliares.
 
-HU-02 incluye código único, título, presupuesto CRC positivo, fecha de cierre,
-estado inicial `Borrador`, auditoría, concurrencia, PostgreSQL, API y MVC. Se
-integró en `main` mediante el PR #17, commit `72309f7`.
+**Historias:** HU-04, HU-05, HU-06 y HU-07.
 
-HU-03 implementa por separado la transición `Borrador` → `Publicada`, exige
-datos válidos y fecha de cierre futura, actualiza la auditoría UTC y conserva el
-control de concurrencia `xmin`. El cierre permanece para una historia posterior.
+**Tareas técnicas verificables:** ofertas (#22), niveles de aprobación (#24) y tipos de cambio (#26).
 
-La velocidad aceptada de la Iteración XP 2 es actualmente de 8 puntos por
-HU-02. Los 5 puntos de HU-03 solo se sumarán después de su integración en
-`main`, una CI satisfactoria y su aceptación.
+**Prácticas y evidencia:** diseño simple por servicios y repositorios, restricciones de PostgreSQL, validaciones de dominio, pruebas automatizadas y mensajes Web para errores de negocio esperables.
+
+**Criterio de salida:** CRUD de ofertas, restricción única por licitación y proveedor, mejor oferta y ahorro; rangos de aprobación sin traslapes; tipo de cambio activo único y conversión CRC → USD.
+
+## Iteración XP 4 — Operación completa, despliegue y estabilización
+
+**Objetivo:** consolidar la experiencia Web, el CRUD restante, la ejecución contenedorizada, Kubernetes, CI y la documentación final.
+
+**Historias:** HU-08 y los criterios operativos de HU-01, HU-04 y HU-07.
+
+**Tareas técnicas verificables:** completar CRUD (#28), Docker Compose (#30), Kubernetes (#32), rediseño Web (#34) y estabilización final (#36).
+
+**Prácticas y evidencia:** refactoring de presentación, manejo de errores Web, conversión de fechas a `America/Costa_Rica`, revisión manual, pruebas de regresión, Docker Compose, manifiestos Kubernetes, GitHub Actions y pruebas E2E.
+
+**Criterio de salida:** operaciones visibles y navegables, errores esperables controlados, fechas presentadas en Costa Rica, infraestructura documentada, CI ejecutable y documentación académica actualizada. La última ejecución manual confirmada registró 180 pruebas correctas y 0 fallidas.
+
+## Reglas de aceptación
+
+Una historia se considera lista para cierre cuando sus criterios son verificables, las pruebas automatizadas relevantes pasan, el comportamiento observable es revisado y la documentación se actualiza. No se reconstruyen estimaciones, fechas o decisiones que no tengan evidencia.

@@ -1,54 +1,70 @@
 # Documentación del Sistema de Gestión de Licitaciones
 
-Este directorio reúne la documentación viva del proyecto. Se actualiza de
-manera incremental junto con las historias de usuario, tareas técnicas y
-pequeñas liberaciones.
+Este directorio contiene la documentación académica y técnica final del
+Sistema de Gestión de Licitaciones. Incluye su alcance, arquitectura, modelo
+de datos, API, pruebas, infraestructura, integración de módulos y uso de
+inteligencia artificial.
 
-## Estado documentado
+## Estado actual
 
-HU-01 — Registrar proveedor y HU-02 — Crear licitación en estado Borrador están
-integradas en `main`. HU-02 se incorporó mediante el PR #17. HU-03 — Publicar
-licitación para recibir ofertas está terminada técnicamente en su rama y
-pendiente de integración; incluye dominio, aplicación, PostgreSQL, API, MVC y
-pruebas automatizadas.
+El sistema implementa:
 
-`v0.1.0` identifica el cierre de la Iteración XP 1 y ya está publicada en
-GitHub. El sistema completo todavía no está terminado.
+- Proveedores.
+- Licitaciones.
+- Ofertas.
+- Niveles de aprobación.
+- Tipos de cambio.
+- Web MVC.
+- API.
+- PostgreSQL.
+- Docker.
+- Kubernetes.
+- Integración continua con GitHub Actions.
+- UnitTests.
+- FunctionalTests.
+- IntegrationTests.
+- EndToEndTests.
 
-## Índice
+La última ejecución manual confirmada registró **180 pruebas correctas y 0
+fallidas**.
 
-- [Plan XP](plan-xp.md): objetivos de las cuatro iteraciones y plan de
-  liberaciones.
-- [Historias de usuario](historias-usuario.md): criterios de aceptación y
-  trazabilidad.
-- [Bitácora XP](bitacora-xp.md): evidencia, métricas y retrospectivas de las
-  iteraciones XP.
-- [Estrategia de pruebas](pruebas.md): niveles, casos ejecutados y CI.
-- [API REST](api.md): endpoints, contratos, colección reproducible y errores.
-- [Módulo de licitaciones](modulos/licitaciones.md): creación de Borradores,
-  publicación, fechas, dinero y persistencia.
-- [Módulo de proveedores](modulos/proveedores.md): diseño y contrato del primer
-  recorrido vertical.
-- [Desarrollo local](desarrollo-local.md): configuración segura de PostgreSQL y
-  ejecución local.
-- [Uso de inteligencia artificial](uso-ia.md): alcance, control humano y
-  validación del uso de Codex.
+La etiqueta `v0.1.0` se conserva como referencia histórica del cierre de una
+liberación anterior.
 
-## Evidencia técnica actual
+## Índice documental
 
-- Plataforma: .NET 9.
-- Persistencia: Entity Framework Core 9 y PostgreSQL 16.
-- Interfaz Web: ASP.NET Core MVC.
-- API: creación de proveedores y licitaciones, más publicación, bajo `/api/v1`.
-- Pruebas: 145 casos xUnit: 64 unitarios, 65 funcionales y 16 de integración.
-- Integración: catorce pruebas usan Testcontainers con PostgreSQL 16 y dos
-  inspeccionan los metadatos del modelo EF Core.
-- CI: GitHub Actions compila en Release y ejecuta la solución completa.
+- [Visión y alcance](vision-alcance.md): problema, objetivos, usuarios,
+  alcance incluido y exclusiones.
+- [Historias de usuario](historias-usuario.md): historias, criterios y estados.
+- [Plan XP](plan-xp.md): cuatro iteraciones XP, prácticas y criterios de salida.
+- [Bitácora XP](bitacora-xp.md): evolución incremental y evidencia del proceso.
+- [Arquitectura general](arquitectura-general.md): capas, dependencias y
+  proyectos de pruebas.
+- [Modelo de datos](modelo-datos.md): entidades, relaciones, restricciones y
+  migraciones.
+- [Integración de módulos](integracion-modulos.md): colaboración persistida y
+  servicios independientes.
+- [API REST](api.md): endpoints, contratos y manejo de errores.
+- [Pruebas automatizadas](pruebas.md): estrategia, proyectos, CI y E2E.
+- [Docker](docker.md): servicios Compose, puertos, volumen y health checks.
+- [Kubernetes](kubernetes.md): recursos, configuración, persistencia y probes.
+- [Desarrollo local](desarrollo-local.md): configuración y ejecución local.
+- [Uso de inteligencia artificial](uso-ia.md): herramientas, asistencia,
+  revisión humana y responsabilidad del equipo.
+
+### Documentación por módulo
+
+- [Módulo de licitaciones](modulos/licitaciones.md).
+- [Módulo de proveedores](modulos/proveedores.md).
+- [Módulo de ofertas](modulos/ofertas.md).
+- [Módulo de niveles de aprobación](modulos/aprobaciones.md).
+- [Módulo de tipos de cambio](modulos/tipos-cambio.md).
 
 ## Convenciones
 
 - La metodología utilizada es Extreme Programming.
-- Las historias y tareas se relacionan con Issues de GitHub.
+- Las historias y tareas se relacionan con GitHub cuando existe una referencia
+  verificable.
 - Los cambios se integran mediante Pull Requests.
-- Se favorecen commits claros con Conventional Commits.
+- Se utilizan Conventional Commits cuando corresponde.
 - No se almacenan secretos ni credenciales reales en el repositorio.

@@ -1,125 +1,65 @@
 # Uso de inteligencia artificial
 
-## Herramienta utilizada
+## Alcance y transparencia
 
-Durante la Iteración XP 1 se utilizó OpenAI Codex como herramienta de asistencia
-para el desarrollo. Su participación no se considera autoría autónoma ni
-reemplaza la responsabilidad del estudiante sobre el proyecto.
+Durante el desarrollo se utilizó asistencia de inteligencia artificial como apoyo al trabajo del equipo. Las herramientas utilizadas fueron **OpenAI Codex** y **ChatGPT**. También pudo utilizarse un asistente integrado en VS Code, sin atribuirle proveedor ni modelo concreto.
 
-## Formas de asistencia
+La IA fue una herramienta de apoyo: no sustituyó el criterio del equipo, la revisión académica, la validación funcional ni la responsabilidad sobre el código final.
 
-Codex se utilizó para:
+## Actividades asistidas
 
-- analizar requisitos y contrastarlos con la estructura del repositorio;
-- proponer tareas pequeñas y secuencias RED-GREEN-REFACTOR;
-- sugerir y preparar pruebas, código y documentación;
-- interpretar errores de compilación y resultados de pruebas compartidos;
-- revisar nombres, estructura, dependencias y separación por capas;
-- proponer comandos Git, mensajes de commit y descripciones de Pull Requests;
-- ayudar a configurar la integración continua.
+OpenAI Codex y ChatGPT se utilizaron como apoyo para:
 
-Entre los casos concretos asistidos se encuentran la normalización Unicode del
-nombre, el tratamiento de duplicados, la persistencia con PostgreSQL, los
-contratos HTTP de la API, el formulario MVC y el workflow de GitHub Actions.
+- analizar requisitos y convertirlos en historias y criterios verificables;
+- proponer implementaciones respetando la separación por capas;
+- generar y revisar código de Domain, Application, Infrastructure, API y Web;
+- crear, revisar y ampliar pruebas unitarias, funcionales, de integración y E2E;
+- interpretar errores de compilación, pruebas, Razor, EF Core y PostgreSQL;
+- depurar flujos Web y estabilizar errores esperables;
+- preparar configuraciones de Docker Compose y Kubernetes;
+- revisar comandos y cambios de Git/GitHub, incluyendo ramas, commits y Pull Requests;
+- redactar y revisar documentación técnica y académica.
 
-## Control y responsabilidad humana
+ChatGPT también se utilizó para análisis de requisitos, revisión de
+implementaciones, interpretación de errores, preparación y revisión de pruebas,
+Docker y Kubernetes, Git/GitHub, documentación, validación funcional y
+preparación para la defensa académica.
 
-El estudiante mantuvo la decisión sobre el alcance y el orden de trabajo,
-revisó los cambios, verificó los resultados y realizó o autorizó su versionado.
-La creación y fusión de Pull Requests se mantuvo bajo control humano.
+## Proceso de revisión humana
 
-Las sugerencias de la IA se contrastaron mediante:
+Las sugerencias se revisaron antes de incorporarse. El equipo mantuvo la decisión sobre alcance, reglas de negocio, prioridades, aceptación y forma de integración.
 
-- revisión de diferencias y estado de Git;
+La validación incluyó:
+
+- lectura y revisión de diferencias;
 - compilación de la solución;
-- ejecución de pruebas;
-- observación de fallos esperados durante RED;
-- nueva ejecución durante GREEN y después de cambios;
-- validación de GitHub Actions antes de integrar a `main`.
+- ejecución de pruebas automatizadas;
+- pruebas funcionales mediante solicitudes HTTP;
+- pruebas manuales de formularios, navegación y presentación Web;
+- ejecución de pruebas de integración con PostgreSQL;
+- ejecución de pruebas E2E con Playwright cuando correspondía;
+- revisión de Docker, Kubernetes y CI.
 
-Al cierre técnico se registraron 46 casos correctos: 23 unitarios, 17
-funcionales y 6 de integración.
+La última ejecución manual confirmada para el cierre registró 180 pruebas correctas y 0 fallidas. Ese resultado pertenece a la ejecución del proyecto y no se presenta como una afirmación autónoma de la IA.
 
-## Asistencia durante HU-02
+## Relación con XP
 
-En la Iteración XP 2, Codex ayudó a extraer del PDF las reglas aplicables a la
-creación de licitaciones y a distinguirlas de las reglas de publicación. También
-preparó cambios en dominio, aplicación, PostgreSQL, API, MVC, pruebas y
-documentación para revisión del estudiante.
+La IA apoyó el ciclo TDD y RED-GREEN-REFACTOR cuando existía una prueba o criterio verificable para guiar el cambio. También ayudó en refactoring, simple design, integración continua, small releases y preparación de feedback. El equipo decidió qué sugerencias aceptar y comprobó que no alteraran las reglas de negocio sin justificación.
 
-Entre las decisiones contrastadas se encuentran:
+## Ejemplos de validación
 
-- no exigir una fecha futura al guardar un Borrador;
-- interpretar `datetime-local` mediante `America/Costa_Rica` y almacenar UTC;
-- usar `decimal` y `numeric(18,2)` sin redondeo silencioso;
-- conservar los espacios internos del código porque el requisito solo elimina
-  espacios laterales;
-- impedir que API o MVC seleccionen un estado inicial diferente de `Borrador`;
-- sembrar los estados y proteger el código mediante un índice único;
-- limitar código y título para evitar errores del índice de PostgreSQL;
-- exigir zona horaria explícita en las fechas recibidas por la API.
+- La normalización Unicode y los duplicados se comprobaron con pruebas de dominio, aplicación y PostgreSQL.
+- Las fechas se verificaron para conservar UTC internamente y presentarse en `America/Costa_Rica`.
+- Las restricciones de ofertas, niveles de aprobación y tipos de cambio se contrastaron con servicios, repositorios, migraciones y pruebas.
+- Los errores Web de negocio se reprodujeron y se verificó que regresaran a un formulario o mostraran un mensaje controlado en lugar de una página genérica.
+- Docker Compose, Kubernetes, health checks, probes y CI se revisaron contra sus archivos reales.
 
-La validación detectó y corrigió la interpretación cultural de límites
-decimales en MVC, el acceso al modelo de diseño requerido para inspeccionar
-restricciones `CHECK` en EF Core 9, textos sin longitud máxima, fechas API sin
-zona explícita y detalles técnicos en errores. Después de las correcciones se
-ejecutaron 118 casos: 53 unitarios, 52 funcionales y 13 de integración.
+## Responsabilidad del equipo
 
-## Asistencia durante HU-03
+Los integrantes son responsables del resultado final. Deben poder explicar, defender y mantener cualquier código generado o asistido por IA. La asistencia no constituye aprobación académica, funcional ni de seguridad.
 
-Codex ayudó a contrastar la Issue #18 con la documentación y el código de
-HU-02, proponer criterios verificables y preparar para revisión los cambios de
-dominio, aplicación, persistencia, API, MVC, pruebas y documentación. La
-prioridad alta y la estimación inicial de 5 puntos proceden del Planning Game,
-no de la herramienta.
+No se introdujeron secretos ni credenciales reales por medio de sugerencias de IA. Las cadenas de conexión de los entornos se mantienen como configuración externa o valores de ejemplo.
 
-Entre las decisiones revisadas se encuentran:
+## Límites de la evidencia
 
-- modelar la publicación como una transición explícita de `Borrador` a
-  `Publicada`, separada de la creación y sin aceptar campos editables;
-- considerar inválida una fecha de cierre igual o anterior al instante de
-  publicación;
-- usar `TimeProvider` para comprobar el tiempo de forma determinista y guardar
-  `UpdatedAt` en UTC;
-- distinguir identificador inválido, licitación inexistente, estado no
-  publicable, datos no publicables y conflicto de concurrencia mediante códigos
-  Problem Details estables;
-- comprobar la actualización con PostgreSQL real y dos contextos que compiten
-  sobre el mismo `xmin`;
-- usar una vista MVC de confirmación con datos de solo lectura, antiforgery y
-  POST-Redirect-GET;
-- redirigir la creación exitosa hacia la confirmación del Borrador recién
-  creado, sin incorporar un listado general fuera del alcance.
-
-Después de revisar y ejecutar la solución completa, el resultado consolidado es
-de 145 casos: 64 unitarios, 65 funcionales y 16 de integración. Las decisiones
-propuestas por la herramienta se aceptaron únicamente después de comprobarlas
-mediante código, revisión y pruebas automatizadas.
-
-## Ejemplos de corrección mediante evidencia
-
-- Una prueba con dos representaciones Unicode visualmente equivalentes falló
-  inicialmente; el resultado condujo a aplicar Unicode Form C.
-- Las pruebas de nombres inválidos guiaron la definición explícita de los
-  caracteres aceptados.
-- Las pruebas de duplicidad llevaron a proteger la regla tanto en el caso de
-  uso como mediante un índice único en PostgreSQL.
-- Las pruebas de API y MVC verificaron el comportamiento observable antes de
-  completar cada interfaz.
-
-Estos ejemplos muestran que las respuestas de la IA fueron sometidas a
-comprobación y podían requerir ajustes.
-
-## Límites del uso de IA
-
-- Codex no realizó una aprobación académica o funcional del proyecto.
-- No sustituyó las pruebas ni la revisión humana.
-- No determinó por sí solo prioridades, estimaciones o aceptación de
-  interesados.
-- No deben atribuirse a la IA decisiones del profesor o del cliente que no
-  estén documentadas.
-- No se deben introducir secretos, credenciales reales ni cadenas de conexión
-  sensibles a partir de sugerencias de IA.
-
-Este documento también fue preparado con asistencia de Codex y queda sujeto a
-revisión y aceptación del estudiante antes de integrarse.
+El repositorio no conserva una transcripción completa de cada interacción con la herramienta ni permite identificar qué sugerencia concreta produjo cada línea. Por ello este documento describe categorías de asistencia y controles realizados, pero no atribuye decisiones individuales, horas de trabajo, prioridades del cliente o resultados no verificables a la IA.
