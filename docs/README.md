@@ -57,8 +57,8 @@ liberaciÃ³n anterior.
 - [MÃ³dulo de licitaciones](modulos/licitaciones.md).
 - [MÃ³dulo de proveedores](modulos/proveedores.md).
 - [MÃ³dulo de ofertas](modulos/ofertas.md).
-- [MÃ³dulo de niveles de aprobaciÃ³n](modulos/aprobaciones.md).
-- [MÃ³dulo de tipos de cambio](modulos/tipos-cambio.md).
+- [MÃ³dulo de niveles de aprobaciÃ³n](modulos/niveles-aprobacion.md).
+- [MÃ³dulo de tipos de cambio](modulos/tipo-cambio.md).
 
 ## Convenciones
 
@@ -69,3 +69,8 @@ liberaciÃ³n anterior.
 - Se utilizan Conventional Commits cuando corresponde.
 - No se almacenan secretos ni credenciales reales en el repositorio.
 
+
+
+- [Módulo de interfaz Web](modulos/interfaz-web.md).
+- [Módulo de API REST](modulos/api-rest.md).
+- [Módulo de persistencia](modulos/persistencia.md).
