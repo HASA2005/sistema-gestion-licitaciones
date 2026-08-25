@@ -1,66 +1,66 @@
-﻿# Uso de inteligencia artificial
+# Uso de inteligencia artificial
 
 ## Alcance y transparencia
 
-Durante el desarrollo se utilizÃ³ asistencia de inteligencia artificial como apoyo al trabajo del equipo. Las herramientas utilizadas fueron **OpenAI Codex** y **ChatGPT**. TambiÃ©n pudo utilizarse un asistente integrado en VS Code, sin atribuirle proveedor ni modelo concreto.
+Durante el desarrollo se utilizó asistencia de inteligencia artificial como apoyo al trabajo del equipo. Las herramientas utilizadas fueron **OpenAI Codex** y **ChatGPT**. También pudo utilizarse un asistente integrado en VS Code, sin atribuirle proveedor ni modelo concreto.
 
-La IA fue una herramienta de apoyo: no sustituyÃ³ el criterio del equipo, la revisiÃ³n acadÃ©mica, la validaciÃ³n funcional ni la responsabilidad sobre el cÃ³digo final.
+La IA fue una herramienta de apoyo: no sustituyó el criterio del equipo, la revisión académica, la validación funcional ni la responsabilidad sobre el código final.
 
 ## Actividades asistidas
 
 OpenAI Codex y ChatGPT se utilizaron como apoyo para:
 
 - analizar requisitos y convertirlos en historias y criterios verificables;
-- proponer implementaciones respetando la separaciÃ³n por capas;
-- generar y revisar cÃ³digo de Domain, Application, Infrastructure, API y Web;
-- crear, revisar y ampliar pruebas unitarias, funcionales, de integraciÃ³n y E2E;
-- interpretar errores de compilaciÃ³n, pruebas, Razor, EF Core y PostgreSQL;
+- proponer implementaciones respetando la separación por capas;
+- generar y revisar código de Domain, Application, Infrastructure, API y Web;
+- crear, revisar y ampliar pruebas unitarias, funcionales, de integración y E2E;
+- interpretar errores de compilación, pruebas, Razor, EF Core y PostgreSQL;
 - depurar flujos Web y estabilizar errores esperables;
 - preparar configuraciones de Docker Compose y Kubernetes;
 - revisar comandos y cambios de Git/GitHub, incluyendo ramas, commits y Pull Requests;
-- redactar y revisar documentaciÃ³n tÃ©cnica y acadÃ©mica.
+- redactar y revisar documentación técnica y académica.
 
-ChatGPT tambiÃ©n se utilizÃ³ para anÃ¡lisis de requisitos, revisiÃ³n de
-implementaciones, interpretaciÃ³n de errores, preparaciÃ³n y revisiÃ³n de pruebas,
-Docker y Kubernetes, Git/GitHub, documentaciÃ³n, validaciÃ³n funcional y
-preparaciÃ³n para la defensa acadÃ©mica.
+ChatGPT también se utilizó para análisis de requisitos, revisión de
+implementaciones, interpretación de errores, preparación y revisión de pruebas,
+Docker y Kubernetes, Git/GitHub, documentación, validación funcional y
+preparación para la defensa académica.
 
-## Proceso de revisiÃ³n humana
+## Proceso de revisión humana
 
-Las sugerencias se revisaron antes de incorporarse. El equipo mantuvo la decisiÃ³n sobre alcance, reglas de negocio, prioridades, aceptaciÃ³n y forma de integraciÃ³n.
+Las sugerencias se revisaron antes de incorporarse. El equipo mantuvo la decisión sobre alcance, reglas de negocio, prioridades, aceptación y forma de integración.
 
-La validaciÃ³n incluyÃ³:
+La validación incluyó:
 
-- lectura y revisiÃ³n de diferencias;
-- compilaciÃ³n de la soluciÃ³n;
-- ejecuciÃ³n de pruebas automatizadas;
+- lectura y revisión de diferencias;
+- compilación de la solución;
+- ejecución de pruebas automatizadas;
 - pruebas funcionales mediante solicitudes HTTP;
-- pruebas manuales de formularios, navegaciÃ³n y presentaciÃ³n Web;
-- ejecuciÃ³n de pruebas de integraciÃ³n con PostgreSQL;
-- ejecuciÃ³n de pruebas E2E con Playwright cuando correspondÃ­a;
-- revisiÃ³n de Docker, Kubernetes y CI.
+- pruebas manuales de formularios, navegación y presentación Web;
+- ejecución de pruebas de integración con PostgreSQL;
+- ejecución de pruebas E2E con Playwright cuando correspondía;
+- revisión de Docker, Kubernetes y CI.
 
-La Ãºltima ejecuciÃ³n manual confirmada para el cierre registrÃ³ 195 pruebas correctas y 0 fallidas. Ese resultado pertenece a la ejecuciÃ³n del proyecto y no se presenta como una afirmaciÃ³n autÃ³noma de la IA.
+La última ejecución manual confirmada para el cierre registró 195 pruebas correctas y 0 fallidas. Ese resultado pertenece a la ejecución del proyecto y no se presenta como una afirmación autónoma de la IA.
 
-## RelaciÃ³n con XP
+## Relación con XP
 
-La IA apoyÃ³ el ciclo TDD y RED-GREEN-REFACTOR cuando existÃ­a una prueba o criterio verificable para guiar el cambio. TambiÃ©n ayudÃ³ en refactoring, simple design, integraciÃ³n continua, small releases y preparaciÃ³n de feedback. El equipo decidiÃ³ quÃ© sugerencias aceptar y comprobÃ³ que no alteraran las reglas de negocio sin justificaciÃ³n.
+La IA apoyó el ciclo TDD y RED-GREEN-REFACTOR cuando existía una prueba o criterio verificable para guiar el cambio. También ayudó en refactoring, simple design, integración continua, small releases y preparación de feedback. El equipo decidió qué sugerencias aceptar y comprobó que no alteraran las reglas de negocio sin justificación.
 
-## Ejemplos de validaciÃ³n
+## Ejemplos de validación
 
-- La normalizaciÃ³n Unicode y los duplicados se comprobaron con pruebas de dominio, aplicaciÃ³n y PostgreSQL.
+- La normalización Unicode y los duplicados se comprobaron con pruebas de dominio, aplicación y PostgreSQL.
 - Las fechas se verificaron para conservar UTC internamente y presentarse en `America/Costa_Rica`.
-- Las restricciones de ofertas, niveles de aprobaciÃ³n y tipos de cambio se contrastaron con servicios, repositorios, migraciones y pruebas.
-- Los errores Web de negocio se reprodujeron y se verificÃ³ que regresaran a un formulario o mostraran un mensaje controlado en lugar de una pÃ¡gina genÃ©rica.
+- Las restricciones de ofertas, niveles de aprobación y tipos de cambio se contrastaron con servicios, repositorios, migraciones y pruebas.
+- Los errores Web de negocio se reprodujeron y se verificó que regresaran a un formulario o mostraran un mensaje controlado en lugar de una página genérica.
 - Docker Compose, Kubernetes, health checks, probes y CI se revisaron contra sus archivos reales.
 
 ## Responsabilidad del equipo
 
-Los integrantes son responsables del resultado final. Deben poder explicar, defender y mantener cualquier cÃ³digo generado o asistido por IA. La asistencia no constituye aprobaciÃ³n acadÃ©mica, funcional ni de seguridad.
+Los integrantes son responsables del resultado final. Deben poder explicar, defender y mantener cualquier código generado o asistido por IA. La asistencia no constituye aprobación académica, funcional ni de seguridad.
 
-No se introdujeron secretos ni credenciales reales por medio de sugerencias de IA. Las cadenas de conexiÃ³n de los entornos se mantienen como configuraciÃ³n externa o valores de ejemplo.
+No se introdujeron secretos ni credenciales reales por medio de sugerencias de IA. Las cadenas de conexión de los entornos se mantienen como configuración externa o valores de ejemplo.
 
-## LÃ­mites de la evidencia
+## Límites de la evidencia
 
-El repositorio no conserva una transcripciÃ³n completa de cada interacciÃ³n con la herramienta ni permite identificar quÃ© sugerencia concreta produjo cada lÃ­nea. Por ello este documento describe categorÃ­as de asistencia y controles realizados, pero no atribuye decisiones individuales, horas de trabajo, prioridades del cliente o resultados no verificables a la IA.
+El repositorio no conserva una transcripción completa de cada interacción con la herramienta ni permite identificar qué sugerencia concreta produjo cada línea. Por ello este documento describe categorías de asistencia y controles realizados, pero no atribuye decisiones individuales, horas de trabajo, prioridades del cliente o resultados no verificables a la IA.
 

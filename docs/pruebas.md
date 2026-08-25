@@ -1,11 +1,11 @@
-﻿# Pruebas automatizadas
+# Pruebas automatizadas
 
 ## Estrategia
 
-La estrategia avanza de lo mÃ¡s aislado a lo mÃ¡s cercano al uso real:
+La estrategia avanza de lo más aislado a lo más cercano al uso real:
 
 ```text
-Unit â†’ Functional â†’ Integration â†’ E2E
+Unit → Functional → Integration → E2E
 ```
 
 Cada nivel verifica una responsabilidad distinta y la suite completa se
@@ -18,10 +18,10 @@ Proyecto: `tests/Licitaciones.UnitTests`.
 Prueba entidades Domain y servicios Application sin infraestructura externa.
 Incluye reglas de:
 
-- proveedores y normalizaciÃ³n;
-- licitaciones, estados y publicaciÃ³n;
+- proveedores y normalización;
+- licitaciones, estados y publicación;
 - ofertas y sus montos;
-- niveles de aprobaciÃ³n y rangos;
+- niveles de aprobación y rangos;
 - tipos de cambio;
 - operaciones CRUD y casos de uso.
 
@@ -34,9 +34,9 @@ solicitudes HTTP. Verifica:
 
 - endpoints API;
 - formularios Web MVC;
-- validaciÃ³n antiforgery;
+- validación antiforgery;
 - redirecciones y respuestas HTTP;
-- conservaciÃ³n de datos ante errores;
+- conservación de datos ante errores;
 - validaciones de reglas de negocio;
 - regresiones Web de proveedores y tipos de cambio;
 - comportamiento funcional de ofertas.
@@ -50,43 +50,43 @@ Usa PostgreSQL real mediante Testcontainers y prueba:
 - configuraciones del modelo EF Core;
 - repositorios;
 - migraciones;
-- claves forÃ¡neas, Ã­ndices y restricciones;
+- claves foráneas, índices y restricciones;
 - persistencia de licitaciones, proveedores y ofertas;
 - recorridos API y Web con infraestructura real;
-- concurrencia mediante `xmin` donde estÃ¡ configurada.
+- concurrencia mediante `xmin` donde está configurada.
 
 ## EndToEndTests
 
 Proyecto: `tests/Licitaciones.EndToEndTests`.
 
 Usa Playwright con Chromium y PostgreSQL mediante Testcontainers. La prueba E2E
-verifica un flujo Web real de crear una licitaciÃ³n y publicarla. La aplicaciÃ³n
+verifica un flujo Web real de crear una licitación y publicarla. La aplicación
 Web se ejecuta sobre Kestrel y puede guardar evidencias de fallos en
 `TestResults/e2e`.
 
-## EjecuciÃ³n
+## Ejecución
 
-Desde la raÃ­z:
+Desde la raíz:
 
 ```powershell
 dotnet test Licitaciones.sln
 ```
 
-La Ãºltima ejecuciÃ³n manual confirmada registrÃ³ **180 pruebas correctas y 0
-fallidas**. Es el resultado de esa ejecuciÃ³n final confirmada, no una cifra
-histÃ³rica fija para todas las ejecuciones futuras.
+La última ejecución manual confirmada registró **195 pruebas correctas y 0
+fallidas**. Es el resultado de esa ejecución final confirmada, no una cifra
+histórica fija para todas las ejecuciones futuras.
 
-## Cobertura de cÃ³digo
+## Cobertura de código
 
-El reporte de cobertura corresponde a la ejecuciÃ³n final del 25/08/2026. Fue
+El reporte de cobertura corresponde a la ejecución final del 25/08/2026. Fue
 generado con coverlet mediante `XPlat Code Coverage`, procesado con
 ReportGenerator y construido a partir de 8 reportes Cobertura combinados.
 
-### Cobertura de lÃ­neas
+### Cobertura de líneas
 
-| Ãrea | Cobertura de lÃ­neas |
+| Área | Cobertura de líneas |
 |---|---:|
-| SoluciÃ³n completa | 88.9 % |
+| Solución completa | 88.9 % |
 | `Licitaciones.Domain` | 95.8 % |
 | `Licitaciones.Application` | 84.1 % |
 | `Licitaciones.Infrastructure` | 96.5 % |
@@ -100,26 +100,26 @@ El resultado combinado registra:
 - Coverable lines: 2919.
 
 Domain supera el objetivo de 80 %, Application supera el objetivo de 80 % y
-la cobertura total de lÃ­neas supera el objetivo de 70 %. El criterio de 70 %
-corresponde a la cobertura total de la soluciÃ³n; no se afirma que Web alcance
+la cobertura total de líneas supera el objetivo de 70 %. El criterio de 70 %
+corresponde a la cobertura total de la solución; no se afirma que Web alcance
 individualmente ese porcentaje.
 
-Web presenta una cobertura individual menor, al igual que algunas Ã¡reas como
+Web presenta una cobertura individual menor, al igual que algunas áreas como
 `OfertaService` y `NivelAprobacionService`. Esto no constituye un incumplimiento
-del objetivo global de cobertura de lÃ­neas.
+del objetivo global de cobertura de líneas.
 
-### Otras mÃ©tricas
+### Otras métricas
 
-| MÃ©trica | Resultado |
+| Métrica | Resultado |
 |---|---:|
 | Branch coverage | 44.7 % |
 | Method coverage | 66.9 % |
 
 Branch coverage y method coverage se informan por separado. El criterio
-principal indicado para esta evaluaciÃ³n corresponde a cobertura de lÃ­neas, por
-lo que estas mÃ©tricas no se presentan como equivalentes a ella.
+principal indicado para esta evaluación corresponde a cobertura de líneas, por
+lo que estas métricas no se presentan como equivalentes a ella.
 
-### ReproducciÃ³n
+### Reproducción
 
 Ejecutar la cobertura con:
 
@@ -127,8 +127,8 @@ Ejecutar la cobertura con:
 dotnet test Licitaciones.sln --collect:"XPlat Code Coverage"
 ```
 
-DespuÃ©s, combinar los reportes Cobertura generados y crear el resumen con
-ReportGenerator. Una forma reproducible, desde la raÃ­z y con la herramienta
+Después, combinar los reportes Cobertura generados y crear el resumen con
+ReportGenerator. Una forma reproducible, desde la raíz y con la herramienta
 instalada, es:
 
 ```powershell
@@ -138,10 +138,10 @@ reportgenerator `
 	-reporttypes:"Html;TextSummary"
 ```
 
-Los porcentajes corresponden exclusivamente a la ejecuciÃ³n concreta del
+Los porcentajes corresponden exclusivamente a la ejecución concreta del
 25/08/2026 y no son cifras fijas para futuras ejecuciones.
 
-## IntegraciÃ³n continua
+## Integración continua
 
 El workflow `.github/workflows/ci.yml`:
 
@@ -155,14 +155,14 @@ El workflow `.github/workflows/ci.yml`:
 - publica artefactos TRX y evidencias E2E;
 - tiene un timeout de 30 minutos para el trabajo.
 
-Los artefactos se conservan durante 7 dÃ­as segÃºn la configuraciÃ³n actual del
+Los artefactos se conservan durante 7 días según la configuración actual del
 workflow.
 
 ## Alcance de la evidencia
 
-Los resultados numÃ©ricos deben asociarse siempre a una ejecuciÃ³n concreta. En
-este documento se conserva Ãºnicamente la Ãºltima ejecuciÃ³n manual confirmada
-indicada para el cierre. Las pruebas E2E dependen de Docker y de la instalaciÃ³n
+Los resultados numéricos deben asociarse siempre a una ejecución concreta. En
+este documento se conserva únicamente la última ejecución manual confirmada
+indicada para el cierre. Las pruebas E2E dependen de Docker y de la instalación
 de Chromium.
 
 
